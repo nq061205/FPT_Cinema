@@ -1,6 +1,6 @@
 package com.group6.mvc.fpt_cinema.service;
 
-import com.group6.mvc.fpt_cinema.entity.Movies;
+import com.group6.mvc.fpt_cinema.entity.Movie;
 
-public interface MovieService extends CrudService<Movies, Integer> {
+public interface MovieService extends CrudService<Movie, Integer> {
 }

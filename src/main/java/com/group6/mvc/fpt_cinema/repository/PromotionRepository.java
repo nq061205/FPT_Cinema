@@ -1,9 +1,9 @@
 package com.group6.mvc.fpt_cinema.repository;
 
-import com.group6.mvc.fpt_cinema.entity.Promotions;
+import com.group6.mvc.fpt_cinema.entity.Promotion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PromotionRepository extends JpaRepository<Promotions, Integer> {
+public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
 }

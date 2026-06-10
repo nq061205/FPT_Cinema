@@ -1,13 +1,14 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
-import com.group6.mvc.fpt_cinema.service.CrudService;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
-@Transactional(readOnly = true)
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.group6.mvc.fpt_cinema.service.CrudService;
+
+@Transactional(readOnly = false)
 public abstract class AbstractCrudService<T, ID> implements CrudService<T, ID> {
 
     private final JpaRepository<T, ID> repository;
