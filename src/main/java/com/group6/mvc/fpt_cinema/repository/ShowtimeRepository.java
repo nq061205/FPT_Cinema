@@ -1,9 +1,10 @@
 package com.group6.mvc.fpt_cinema.repository;
 
-import com.group6.mvc.fpt_cinema.entity.Showtimes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.group6.mvc.fpt_cinema.entity.Showtime;
+
 @Repository
-public interface ShowtimeRepository extends JpaRepository<Showtimes, Integer> {
+public interface ShowtimeRepository extends JpaRepository<Showtime, Integer> {
 }

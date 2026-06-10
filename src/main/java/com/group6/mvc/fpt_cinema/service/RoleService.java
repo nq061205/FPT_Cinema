@@ -1,6 +1,6 @@
 package com.group6.mvc.fpt_cinema.service;
 
-import com.group6.mvc.fpt_cinema.entity.Roles;
+import com.group6.mvc.fpt_cinema.entity.Role;
 
-public interface RoleService extends CrudService<Roles, Integer> {
+public interface RoleService extends CrudService<Role, Integer> {
 }
