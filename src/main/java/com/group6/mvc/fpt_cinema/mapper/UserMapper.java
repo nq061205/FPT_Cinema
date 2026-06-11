@@ -1,5 +1,7 @@
 package com.group6.mvc.fpt_cinema.mapper;
 
+import com.group6.mvc.fpt_cinema.security.EncryptPassword;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
@@ -12,31 +14,24 @@ import com.group6.mvc.fpt_cinema.repository.RoleRepository;
 
 @Component
 public class UserMapper {
-
+    @Autowired
     private RoleRepository roleRepository;
 
-    private UserMapper(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public UserMapper() {
     }
 
     public UserCreateAccountResponse toCreateAccountResponse(User user) {
         UserCreateAccountResponse response = new UserCreateAccountResponse();
-        response.setUsername(user.getFullName());
+        response.setEmail(user.getEmail());
         return response;
     }
 
     public User toEntity(CreateAccountRequest request) {
         User user = new User();
-        Role role = roleRepository.findById(request.getRoleId())
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-        user.setRole(role);
+        user.setPasswordHash(EncryptPassword.encryptPassword(request.getPassword()));
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setPasswordHash(request.getPasswordHash());
-        user.setStatus(request.getStatus());
-        user.setRewardPoints(request.getRewardPoints());
-        user.setMembershipLevel(request.getMembershipLevel());
         return user;
     }
 }

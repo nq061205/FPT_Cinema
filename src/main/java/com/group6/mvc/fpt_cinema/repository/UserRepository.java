@@ -7,4 +7,11 @@ import com.group6.mvc.fpt_cinema.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+    User findByFullName(String username);
+    User findByEmail(String email);
+    User findByPhone(String phoneNumber);
+
+    User getUserByEmail(String email);
+
+    User getUserByPhone(String phone);
 }

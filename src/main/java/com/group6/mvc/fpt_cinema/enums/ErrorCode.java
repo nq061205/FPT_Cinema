@@ -6,11 +6,9 @@ import lombok.Getter;
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Server error"),
 
-    USERNAME_NOT_BLANK(1001, "Username must not be blank"),
-    EMAIL_NOT_BLANK(1002, "Email address must not be blank"),
-    PASSWORD_NOT_BLANK(1003, "Password must not be blank"),
-
-    ROLE_NOT_FOUND(2001, "Role not found");
+    CREATE_USER_FAIL(1001, "Create user failed"),
+    EMAIL_EXIST(1002, "Email already exist"),
+    ROLE_NOT_FOUND(2001, "Role not found"), PHONE_EXIST(1003, "Phone number already exist"),;
 
     private int code;
     private String message;
