@@ -1,42 +1,47 @@
 package com.group6.mvc.fpt_cinema.mapper;
 
+import com.group6.mvc.fpt_cinema.security.EncryptPassword;
 import org.springframework.stereotype.Component;
 
 import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
 import com.group6.mvc.fpt_cinema.dto.response.UserCreateAccountResponse;
-import com.group6.mvc.fpt_cinema.entity.Role;
+import com.group6.mvc.fpt_cinema.dto.response.UserResponse;
 import com.group6.mvc.fpt_cinema.entity.User;
-import com.group6.mvc.fpt_cinema.enums.ErrorCode;
-import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.repository.RoleRepository;
 
 @Component
 public class UserMapper {
 
-    private RoleRepository roleRepository;
-
-    private UserMapper(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public UserMapper() {
     }
 
     public UserCreateAccountResponse toCreateAccountResponse(User user) {
         UserCreateAccountResponse response = new UserCreateAccountResponse();
-        response.setUsername(user.getFullName());
+        response.setEmail(user.getEmail());
         return response;
+    }
+
+    public UserResponse toResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .status(user.getStatus())
+                .rewardPoints(user.getRewardPoints())
+                .membershipLevel(user.getMembershipLevel())
+                .roleId(user.getRole().getId())
+                .role(user.getRole().getRoleName())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
     }
 
     public User toEntity(CreateAccountRequest request) {
         User user = new User();
-        Role role = roleRepository.findById(request.getRoleId())
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-        user.setRole(role);
+        user.setPasswordHash(EncryptPassword.encryptPassword(request.getPassword()));
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setPasswordHash(request.getPasswordHash());
-        user.setStatus(request.getStatus());
-        user.setRewardPoints(request.getRewardPoints());
-        user.setMembershipLevel(request.getMembershipLevel());
         return user;
     }
 }

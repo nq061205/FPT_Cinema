@@ -33,7 +33,7 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    private Role role ;
 
     @Column(name = "full_name", nullable = false, length = 150)
     private String fullName;

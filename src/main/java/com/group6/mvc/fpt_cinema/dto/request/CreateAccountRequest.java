@@ -12,14 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateAccountRequest {
-    private int roleId;
     private String fullName;
     private String email;
     private String phone;
-    private String passwordHash;
-    private String status;
-    private Integer rewardPoints;
-    private String membershipLevel;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String password;
 }

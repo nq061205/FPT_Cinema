@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateAccountResponse {
-    private String email;
+public class RoleResponse {
+    private String roleName;
 }
