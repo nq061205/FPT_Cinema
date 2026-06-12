@@ -1,6 +1,10 @@
 package com.group6.mvc.fpt_cinema.repository;
 
+import java.util.Optional;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.group6.mvc.fpt_cinema.entity.User;
@@ -14,4 +18,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User getUserByEmail(String email);
 
     User getUserByPhone(String phone);
+
+    Optional<User> findOneByEmailIgnoreCase(String email);
+
+    @Query("""
+            select u
+            from User u
+            join fetch u.role
+            order by u.id
+            """)
+    List<User> findAllWithRoleOrderById();
 }

@@ -1,21 +1,15 @@
 package com.group6.mvc.fpt_cinema.mapper;
 
 import com.group6.mvc.fpt_cinema.security.EncryptPassword;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
 import com.group6.mvc.fpt_cinema.dto.response.UserCreateAccountResponse;
-import com.group6.mvc.fpt_cinema.entity.Role;
+import com.group6.mvc.fpt_cinema.dto.response.UserResponse;
 import com.group6.mvc.fpt_cinema.entity.User;
-import com.group6.mvc.fpt_cinema.enums.ErrorCode;
-import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.repository.RoleRepository;
 
 @Component
 public class UserMapper {
-    @Autowired
-    private RoleRepository roleRepository;
 
     public UserMapper() {
     }
@@ -24,6 +18,22 @@ public class UserMapper {
         UserCreateAccountResponse response = new UserCreateAccountResponse();
         response.setEmail(user.getEmail());
         return response;
+    }
+
+    public UserResponse toResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .status(user.getStatus())
+                .rewardPoints(user.getRewardPoints())
+                .membershipLevel(user.getMembershipLevel())
+                .roleId(user.getRole().getId())
+                .role(user.getRole().getRoleName())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
     }
 
     public User toEntity(CreateAccountRequest request) {
