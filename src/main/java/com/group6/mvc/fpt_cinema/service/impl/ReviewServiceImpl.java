@@ -1,5 +1,6 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import com.group6.mvc.fpt_cinema.dto.request.review.EditReviewRequest;
 import com.group6.mvc.fpt_cinema.dto.request.review.ReviewRequest;
 import com.group6.mvc.fpt_cinema.dto.response.review.ReviewResponse;
 import com.group6.mvc.fpt_cinema.entity.Booking;
@@ -50,14 +51,14 @@ public class ReviewServiceImpl
 
     @Override
     @Transactional
-    public ReviewResponse createReview(ReviewRequest request) {
+    public ReviewResponse createReview(ReviewRequest request, Integer userId) {
         //Validate 1-5 sao
         if(request.getRating() == null || request.getRating() < 1 || request.getRating() > 5){
             throw new AppException(ErrorCode.INVALID_RATING);
         }
 
         // tim booking theo id
-        Booking booking = bookingRepository.findByIdAndCustomerId(request.getBookingId(), request.getUserId())
+        Booking booking = bookingRepository.findByIdAndCustomerId(request.getBookingId(), userId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
 
          if(!"CONFIRMED".equals(booking.getStatus())){
@@ -77,11 +78,11 @@ public class ReviewServiceImpl
              throw new AppException(ErrorCode.MOVIE_MISMATCH);
          }
 
-         if(reviewRepository.existsByCustomerIdAndBookingId(request.getUserId(), request.getBookingId())){
+         if(reviewRepository.existsByCustomerIdAndBookingId(userId, request.getBookingId())){
              throw new AppException(ErrorCode.ALREADY_REVIEW);
          }
 
-         int reviewCount = reviewRepository.countByCustomerIdAndMovieId(request.getUserId(), request.getMovieId());
+         int reviewCount = reviewRepository.countByCustomerIdAndMovieId(userId, request.getMovieId());
 
          if(reviewCount >= 2){
              throw new AppException(ErrorCode.REVIEW_LIMIT_ACCESS);
@@ -106,4 +107,32 @@ public class ReviewServiceImpl
         return reviews.stream().map(reviewMapper::toResponse).collect(Collectors.toList()); 
     
     }
+
+    @Override
+    @Transactional
+    public ReviewResponse editReview(Integer reviewId, EditReviewRequest request, Integer userId) {
+        //Tim review
+        Review review = reviewRepository.findById(reviewId)
+        .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
+
+        if(!review.getCustomer().getId().equals(userId)){
+            throw new AppException(ErrorCode.NOT_REVIEW_OWNER); 
+        }
+
+        if(review.getCreatedAt().plusHours(24).isBefore(LocalDateTime.now())){
+            throw new AppException(ErrorCode.EDIT_TIME_EXPIRED); 
+        }
+
+        if(request.getRating() != null){
+            review.setRating(request.getRating());
+        }
+
+        if(request.getComment() != null){
+            review.setComment(request.getComment());
+        }
+
+        Review saved = reviewRepository.save(review);
+        return reviewMapper.toResponse(saved); 
+    }
+
 }

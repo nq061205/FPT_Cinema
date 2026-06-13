@@ -9,11 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewRequest {
-    private Integer movieId;
-    private Integer bookingId;
-    private Integer rating;
-    private String comment;
-
-
+public class EditReviewRequest {
+    private Integer rating; 
+    private String comment; 
+    
 }

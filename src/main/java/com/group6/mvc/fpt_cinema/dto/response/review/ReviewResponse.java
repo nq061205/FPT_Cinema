@@ -21,5 +21,6 @@ public class ReviewResponse {
     private LocalDateTime createdAt; 
     private String movieTitle;
     private Integer movieId; 
+    private LocalDateTime updatedAt;
     
 }
