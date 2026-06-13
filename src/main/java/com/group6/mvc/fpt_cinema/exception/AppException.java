@@ -1,6 +1,7 @@
 package com.group6.mvc.fpt_cinema.exception;
 
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -7,4 +7,5 @@ import com.group6.mvc.fpt_cinema.entity.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer> {
+    Role getRoleById(Integer id);
 }
