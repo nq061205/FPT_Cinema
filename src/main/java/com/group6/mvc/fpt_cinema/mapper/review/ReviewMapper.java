@@ -1,0 +1,47 @@
+package com.group6.mvc.fpt_cinema.mapper.review;
+
+import com.group6.mvc.fpt_cinema.dto.request.review.ReviewRequest;
+import com.group6.mvc.fpt_cinema.entity.Booking;
+import com.group6.mvc.fpt_cinema.entity.Movie;
+import org.mapstruct.Mapper;
+
+import com.group6.mvc.fpt_cinema.dto.response.review.ReviewResponse;
+import com.group6.mvc.fpt_cinema.entity.Review;
+import com.group6.mvc.fpt_cinema.entity.User;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+
+@Mapper(componentModel = "spring")
+public interface ReviewMapper {
+
+    String DEFAULT_AVATAR = "/images/default-avatar.png";
+
+    @Mapping(target = "maskedName", source = "customer.fullName", qualifiedByName = "mask")
+    @Mapping(target = "avatarUrl", constant = DEFAULT_AVATAR)
+    @Mapping(target = "movieTitle", source = "movie.title")
+    ReviewResponse toResponse(Review review);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", constant = "VISIBLE")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    Review toEntity(ReviewRequest request, User customer, Movie movie, Booking booking);
+
+    @Named("mask")
+    static String maskName(String fullName) {
+        if (fullName == null || fullName.isEmpty()) {
+            return "*****";
+        }
+
+        if (fullName.length() <= 2) {
+            return fullName.charAt(0) + "*****";
+        }
+
+        if (fullName.length() <= 4) {
+            return fullName.charAt(0) + "*****" + fullName.substring(fullName.length() - 1);
+        }
+
+        return fullName.substring(0, 2) + "*****" + fullName.substring(fullName.length() - 2);
+    }
+
+}
