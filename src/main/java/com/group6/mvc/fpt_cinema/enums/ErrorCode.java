@@ -29,7 +29,16 @@ public enum ErrorCode {
     MOVIE_NOT_FOUND(3009, "Movie not found", HttpStatus.NOT_FOUND),
     REVIEW_NOT_FOUND(3010,  "Review not found", HttpStatus.NOT_FOUND), 
     NOT_REVIEW_OWNER(3011, "You are not owner of review", HttpStatus.FORBIDDEN), 
-    EDIT_TIME_EXPIRED(3012, "You can only edit within 24 hours", HttpStatus.BAD_REQUEST); 
+    EDIT_TIME_EXPIRED(3012, "You can only edit within 24 hours", HttpStatus.BAD_REQUEST), 
+    ROOM_NAME_BLANK(3013, "Room name must not be blank", HttpStatus.BAD_REQUEST),
+    INVALID_ROOM_TYPE(3014, "Invalid room type", HttpStatus.BAD_REQUEST), 
+    ROOM_NAME_EXIST(3015, "Room name already exists",HttpStatus.BAD_REQUEST), 
+    ROOM_NOT_FOUND(3016, "Room not found", HttpStatus.NOT_FOUND),
+    ROOM_HAS_ACTIVE_SHOWTIMES(3017, "Cannot close with active showtime", HttpStatus.BAD_REQUEST), 
+    ROOM_NAME_TOO_LONG(4006, "Room name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
+    INVALID_ROOM_STATUS(4007, "Invalid room status", HttpStatus.BAD_REQUEST); 
+
+
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;
