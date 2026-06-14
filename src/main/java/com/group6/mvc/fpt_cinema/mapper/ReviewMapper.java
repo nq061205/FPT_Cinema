@@ -1,4 +1,4 @@
-package com.group6.mvc.fpt_cinema.mapper.review;
+package com.group6.mvc.fpt_cinema.mapper;
 
 import com.group6.mvc.fpt_cinema.dto.request.review.ReviewRequest;
 import com.group6.mvc.fpt_cinema.entity.Booking;
@@ -16,12 +16,14 @@ public interface ReviewMapper {
 
     String DEFAULT_AVATAR = "/images/default-avatar.png";
 
+    @Mapping(target = "movieId", source = "movie.id")
     @Mapping(target = "maskedName", source = "customer.fullName", qualifiedByName = "mask")
     @Mapping(target = "avatarUrl", constant = DEFAULT_AVATAR)
     @Mapping(target = "movieTitle", source = "movie.title")
     ReviewResponse toResponse(Review review);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "booking", ignore = true)
     @Mapping(target = "status", constant = "VISIBLE")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

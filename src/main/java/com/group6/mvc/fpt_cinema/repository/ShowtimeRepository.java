@@ -13,4 +13,10 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Integer> {
 
     boolean existsByRoomIdAndStatus(Integer roomId, String status); 
     boolean existsByRoomIdAndStatusNotInAndStartTimeAfter(Integer roomId, List<String> statuses, LocalDateTime startTime); 
+
+    List<Showtime> findByRoomIdAndStatusNotIn(Integer roomId, List<String> statuses); 
+
+    List<Showtime> findByMovieIdAndStatusNotInOrderByStartTimeAsc(Integer movieId, List<String> statuses); 
+
+    List<Showtime> findByStatusNotInOrderByStartTimeAsc(List<String> statuses); 
 }

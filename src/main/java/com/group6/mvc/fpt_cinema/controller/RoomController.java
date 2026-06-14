@@ -57,7 +57,7 @@ public class RoomController {
         .build(); 
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<RoomResponse> updateRoom(
         @PathVariable Integer id, 

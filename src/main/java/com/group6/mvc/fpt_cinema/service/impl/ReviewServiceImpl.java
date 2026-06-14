@@ -9,7 +9,7 @@ import com.group6.mvc.fpt_cinema.entity.Review;
 import com.group6.mvc.fpt_cinema.entity.User;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.mapper.review.ReviewMapper;
+import com.group6.mvc.fpt_cinema.mapper.ReviewMapper;
 import com.group6.mvc.fpt_cinema.repository.BookingRepository;
 import com.group6.mvc.fpt_cinema.repository.MovieRepository;
 import com.group6.mvc.fpt_cinema.repository.ReviewRepository;
@@ -104,8 +104,8 @@ public class ReviewServiceImpl
     public List<ReviewResponse> getReviewsByMovie(Integer movieId) {
         List<Review> reviews = reviewRepository.findByMovieIdAndStatusOrderByCreatedAtDesc(movieId, "VISIBLE" );
 
-        return reviews.stream().map(reviewMapper::toResponse).collect(Collectors.toList()); 
-    
+        return reviews.stream().map(reviewMapper::toResponse).collect(Collectors.toList());
+
     }
 
     @Override
@@ -116,11 +116,11 @@ public class ReviewServiceImpl
         .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
 
         if(!review.getCustomer().getId().equals(userId)){
-            throw new AppException(ErrorCode.NOT_REVIEW_OWNER); 
+            throw new AppException(ErrorCode.NOT_REVIEW_OWNER);
         }
 
         if(review.getCreatedAt().plusHours(24).isBefore(LocalDateTime.now())){
-            throw new AppException(ErrorCode.EDIT_TIME_EXPIRED); 
+            throw new AppException(ErrorCode.EDIT_TIME_EXPIRED);
         }
 
         if(request.getRating() != null){
@@ -132,7 +132,7 @@ public class ReviewServiceImpl
         }
 
         Review saved = reviewRepository.save(review);
-        return reviewMapper.toResponse(saved); 
+        return reviewMapper.toResponse(saved);
     }
 
 }

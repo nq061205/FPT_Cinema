@@ -36,8 +36,11 @@ public enum ErrorCode {
     ROOM_NOT_FOUND(3016, "Room not found", HttpStatus.NOT_FOUND),
     ROOM_HAS_ACTIVE_SHOWTIMES(3017, "Cannot close with active showtime", HttpStatus.BAD_REQUEST), 
     ROOM_NAME_TOO_LONG(4006, "Room name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
-    INVALID_ROOM_STATUS(4007, "Invalid room status", HttpStatus.BAD_REQUEST); 
-
+    INVALID_ROOM_STATUS(4007, "Invalid room status", HttpStatus.BAD_REQUEST),
+    SHOWTIME_OVERLAP(5001, "Showtime overlaps with an existing showtime in this room", HttpStatus.CONFLICT),
+    SHOWTIME_NOT_FOUND(5002, "Showtime not found", HttpStatus.NOT_FOUND),
+    SHOWTIME_IN_PAST(5003, "Cannot create showtime in the past", HttpStatus.BAD_REQUEST),
+    INVALID_PRICE(5004, "Base price must be positive", HttpStatus.BAD_REQUEST); 
 
     private final int code;
     private final String message;
