@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.dto.request.LoginRequest;
+import com.group6.mvc.fpt_cinema.dto.request.RegisterRequest;
 import com.group6.mvc.fpt_cinema.dto.response.CurrentUserResponse;
 import com.group6.mvc.fpt_cinema.dto.response.LoginResponse;
+import com.group6.mvc.fpt_cinema.dto.response.RegisterResponse;
+import com.group6.mvc.fpt_cinema.service.TokenRevocationService;
 import com.group6.mvc.fpt_cinema.service.UserService;
 
 @RestController
@@ -19,9 +22,13 @@ import com.group6.mvc.fpt_cinema.service.UserService;
 public class AuthenticationController {
 
     private final UserService userService;
+    private final TokenRevocationService tokenRevocationService;
 
-    public AuthenticationController(UserService userService) {
+    public AuthenticationController(
+            UserService userService,
+            TokenRevocationService tokenRevocationService) {
         this.userService = userService;
+        this.tokenRevocationService = tokenRevocationService;
     }
 
     @PostMapping("/login")
@@ -45,6 +52,22 @@ public class AuthenticationController {
         return ApiResponse.<CurrentUserResponse>builder()
                 .message("Authenticated user")
                 .result(currentUser)
+                .build();
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<RegisterResponse> register(@RequestBody RegisterRequest request) {
+        return ApiResponse.<RegisterResponse>builder()
+                .message("Registration successful")
+                .result(userService.register(request))
+                .build();
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@AuthenticationPrincipal Jwt jwt) {
+        tokenRevocationService.revoke(jwt);
+        return ApiResponse.<Void>builder()
+                .message("Logout successful")
                 .build();
     }
 }

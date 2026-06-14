@@ -1,0 +1,47 @@
+package com.group6.mvc.fpt_cinema.controller;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
+import com.group6.mvc.fpt_cinema.dto.request.CreatePermissionRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UpdatePermissionRequest;
+import com.group6.mvc.fpt_cinema.dto.response.PermissionResponse;
+import com.group6.mvc.fpt_cinema.service.PermissionService;
+
+@RestController
+@RequestMapping("/api/permissions")
+public class PermissionController {
+
+    private final PermissionService permissionService;
+
+    public PermissionController(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PERMISSION_CREATE')")
+    public ApiResponse<PermissionResponse> createPermission(
+            @RequestBody CreatePermissionRequest request) {
+        return ApiResponse.<PermissionResponse>builder()
+                .message("Permission created successfully")
+                .result(permissionService.createPermission(request))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('PERMISSION_UPDATE')")
+    public ApiResponse<PermissionResponse> updatePermission(
+            @PathVariable Integer id,
+            @RequestBody UpdatePermissionRequest request) {
+        return ApiResponse.<PermissionResponse>builder()
+                .message("Permission updated successfully")
+                .result(permissionService.updatePermission(id, request))
+                .build();
+    }
+}
