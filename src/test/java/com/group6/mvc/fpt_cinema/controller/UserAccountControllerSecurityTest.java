@@ -1,17 +1,16 @@
 package com.group6.mvc.fpt_cinema.controller;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.group6.mvc.fpt_cinema.entity.Role;
@@ -55,14 +54,14 @@ class UserAccountControllerSecurityTest {
     @Test
     void customerReceivesForbidden() throws Exception {
         mockMvc.perform(get("/api/user")
-                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
+                .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void managerCanViewUsersWithoutPasswordHash() throws Exception {
         mockMvc.perform(get("/api/user")
-                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_MANAGER"))))
+                .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_MANAGER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result[0].email").value("postman.customer@test.com"))
                 .andExpect(jsonPath("$.result[0].role").value("customer-test"))
@@ -72,7 +71,7 @@ class UserAccountControllerSecurityTest {
     @Test
     void adminCanViewUsers() throws Exception {
         mockMvc.perform(get("/api/user")
-                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
+                .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result[0].email").value("postman.customer@test.com"));
     }

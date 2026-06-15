@@ -1,4 +1,4 @@
-package com.group6.mvc.fpt_cinema.dto.request;
+package com.group6.mvc.fpt_cinema.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateAccountRequest {
+public class UserProfileResponse {
     private String fullName;
+    private Integer roleId;
     private String email;
     private String phone;
-    private String password;
+    private Integer rewardPoints;
+    private String membershipLevel;
 }
