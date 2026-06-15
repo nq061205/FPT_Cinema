@@ -14,6 +14,8 @@ import com.group6.mvc.fpt_cinema.dto.request.UpdatePermissionRequest;
 import com.group6.mvc.fpt_cinema.dto.response.PermissionResponse;
 import com.group6.mvc.fpt_cinema.service.PermissionService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/permissions")
 public class PermissionController {
@@ -27,7 +29,7 @@ public class PermissionController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PERMISSION_CREATE')")
     public ApiResponse<PermissionResponse> createPermission(
-            @RequestBody CreatePermissionRequest request) {
+            @Valid @RequestBody CreatePermissionRequest request) {
         return ApiResponse.<PermissionResponse>builder()
                 .message("Permission created successfully")
                 .result(permissionService.createPermission(request))
@@ -38,7 +40,7 @@ public class PermissionController {
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PERMISSION_UPDATE')")
     public ApiResponse<PermissionResponse> updatePermission(
             @PathVariable Integer id,
-            @RequestBody UpdatePermissionRequest request) {
+            @Valid @RequestBody UpdatePermissionRequest request) {
         return ApiResponse.<PermissionResponse>builder()
                 .message("Permission updated successfully")
                 .result(permissionService.updatePermission(id, request))

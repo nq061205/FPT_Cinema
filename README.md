@@ -49,3 +49,45 @@ $bytes = New-Object byte[] 32
 [Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
 $env:JWT_SECRET = [Convert]::ToBase64String($bytes)
 ```
+
+## n8n chatbot integration
+
+Configure the published n8n webhook before starting the backend:
+
+```powershell
+$env:N8N_CHAT_WEBHOOK_URL="https://duyhoang.app.n8n.cloud/webhook/chat-api"
+$env:N8N_CHAT_WEBHOOK_SECRET="<your-new-webhook-secret>"
+```
+
+The n8n workflow must return:
+
+```json
+{
+  "answer": "Chatbot response",
+  "intent": "GENERAL_CHAT"
+}
+```
+
+The `Basic LLM Chain` prompt must use the movie context sent by the backend:
+
+```text
+You are the FPT Cinema assistant.
+Answer in Vietnamese using only the supplied system data.
+For a movie-list question, include movies whose status is NOW_SHOWING.
+If the data does not contain the answer, say that the information is unavailable.
+
+User question:
+{{ $json.body.message }}
+
+Movie data:
+{{ JSON.stringify($json.body.context.movies) }}
+```
+
+Chat endpoints require a valid JWT:
+
+```http
+POST /api/chat/conversations
+POST /api/chat/conversations/{conversationId}/messages
+GET /api/chat/conversations/{conversationId}/messages
+PUT /api/chat/conversations/{conversationId}/close
+```

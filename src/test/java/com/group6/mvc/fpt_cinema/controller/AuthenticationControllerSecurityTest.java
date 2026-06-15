@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,5 +75,20 @@ class AuthenticationControllerSecurityTest {
                 .andExpect(jsonPath("$.message").value("Logout successful"));
 
         verify(tokenRevocationService).revoke(any());
+    }
+
+    @Test
+    void meAcceptsNumericClaimsDecodedAsLong() throws Exception {
+        mockMvc.perform(get("/api/auth/me")
+                        .with(jwt().jwt(jwt -> jwt
+                                .subject("customer@test.com")
+                                .claim("userId", 12L)
+                                .claim("roleId", 3L)
+                                .claim("role", "CUSTOMER")
+                                .claim("permissions", java.util.List.of("MOVIE_VIEW")))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.userId").value(12))
+                .andExpect(jsonPath("$.result.roleId").value(3))
+                .andExpect(jsonPath("$.result.role").value("CUSTOMER"));
     }
 }

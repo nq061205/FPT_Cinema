@@ -21,6 +21,8 @@ import com.group6.mvc.fpt_cinema.dto.response.UserResponse;
 import com.group6.mvc.fpt_cinema.service.UserPermissionService;
 import com.group6.mvc.fpt_cinema.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserAccountController {
@@ -37,7 +39,7 @@ public class UserAccountController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('CREATE_USER')")
-    public ApiResponse<UserCreateAccountResponse> createAccount(@RequestBody CreateAccountRequest request) {
+    public ApiResponse<UserCreateAccountResponse> createAccount(@Valid @RequestBody CreateAccountRequest request) {
         UserCreateAccountResponse response = userService.createAccount(request);
         ApiResponse<UserCreateAccountResponse> apiResponse = new ApiResponse<>();
         apiResponse.setMessage("Account created successfully!");
@@ -67,7 +69,7 @@ public class UserAccountController {
     @PreAuthorize("hasAuthority('USER_UPDATE')")
     public ApiResponse<UserResponse> updateUser(
             @PathVariable Integer id,
-            @RequestBody UpdateUserRequest request) {
+            @Valid @RequestBody UpdateUserRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .message("User updated successfully")
                 .result(userService.updateUser(id, request))
