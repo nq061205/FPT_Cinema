@@ -57,21 +57,21 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/login", "/api/user/create").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/user/**").permitAll()
+                        .requestMatchers("/api/profile/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/movie/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
-                        .authenticationEntryPoint((request, response, exception) ->
-                                writeSecurityError(response, 401, 1007, "Authentication is required"))
-                        .accessDeniedHandler((request, response, exception) ->
-                                writeSecurityError(response, 403, 1008, "Access denied")))
+                        .authenticationEntryPoint((request, response, exception) -> writeSecurityError(response, 401,
+                                1007, "Authentication is required"))
+                        .accessDeniedHandler((request, response, exception) -> writeSecurityError(response, 403, 1008,
+                                "Access denied")))
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, exception) ->
-                                writeSecurityError(response, 401, 1007, "Authentication is required"))
-                        .accessDeniedHandler((request, response, exception) ->
-                                writeSecurityError(response, 403, 1008, "Access denied")))
+                        .authenticationEntryPoint((request, response, exception) -> writeSecurityError(response, 401,
+                                1007, "Authentication is required"))
+                        .accessDeniedHandler((request, response, exception) -> writeSecurityError(response, 403, 1008,
+                                "Access denied")))
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .build();
