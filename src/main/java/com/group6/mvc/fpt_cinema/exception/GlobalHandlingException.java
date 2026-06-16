@@ -2,6 +2,7 @@ package com.group6.mvc.fpt_cinema.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,14 +37,25 @@ public class GlobalHandlingException {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse<Void>> handlingValidationException(MethodArgumentNotValidException exception) {
-        String enumKey = exception.getFieldError().getDefaultMessage();
-        ErrorCode errorCode = ErrorCode.valueOf(enumKey);
+        ErrorCode errorCode = resolveValidationErrorCode(exception);
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
 
         return ResponseEntity.status(errorCode.getHttpStatus()).body(apiResponse);
+    }
+
+    private ErrorCode resolveValidationErrorCode(MethodArgumentNotValidException exception) {
+        FieldError fieldError = exception.getBindingResult().getFieldError();
+        if (fieldError == null || fieldError.getDefaultMessage() == null) {
+            return ErrorCode.INVALID_INPUT;
+        }
+        try {
+            return ErrorCode.valueOf(fieldError.getDefaultMessage());
+        } catch (IllegalArgumentException ignored) {
+            return ErrorCode.INVALID_INPUT;
+        }
     }
 
     @ExceptionHandler(value = Exception.class)

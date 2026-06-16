@@ -3,6 +3,8 @@ package com.group6.mvc.fpt_cinema.mapper;
 import org.springframework.stereotype.Component;
 
 import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
+import com.group6.mvc.fpt_cinema.dto.request.RegisterRequest;
+import com.group6.mvc.fpt_cinema.dto.response.RegisterResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserChangePasswordResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserCreateAccountResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserProfileResponse;
@@ -35,7 +37,24 @@ public class UserMapper {
                 .build();
     }
 
+    public RegisterResponse toRegisterResponse(User user) {
+        RegisterResponse response = new RegisterResponse();
+        response.setEmail(user.getEmail());
+        response.setFullName(user.getFullName());
+        response.setPhone(user.getPhone());
+        return response;
+    }
+
     public User toEntity(CreateAccountRequest request) {
+        User user = new User();
+        user.setPasswordHash(EncryptPassword.encryptPassword(request.getPassword()));
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        return user;
+    }
+
+    public User toEntity(RegisterRequest request) {
         User user = new User();
         user.setPasswordHash(EncryptPassword.encryptPassword(request.getPassword()));
         user.setFullName(request.getFullName());

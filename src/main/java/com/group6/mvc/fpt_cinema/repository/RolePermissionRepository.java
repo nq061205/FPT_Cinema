@@ -1,6 +1,7 @@
 package com.group6.mvc.fpt_cinema.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.group6.mvc.fpt_cinema.entity.Role_Permission;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,8 @@ public interface RolePermissionRepository extends JpaRepository<Role_Permission,
             where rolePermission.role.id = :roleId
             """)
     List<Role_Permission> findAllWithPermissionByRoleId(@Param("roleId") Integer roleId);
+
+    Optional<Role_Permission> findByRoleIdAndPermissionId(
+            Integer roleId,
+            Integer permissionId);
 }

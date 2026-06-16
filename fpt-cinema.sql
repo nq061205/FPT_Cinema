@@ -59,6 +59,12 @@ CREATE TABLE `users` (
   `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE `revoked_tokens` (
+  `token_id` VARCHAR(100) PRIMARY KEY,
+  `expires_at` DATETIME(6) NOT NULL,
+  `revoked_at` DATETIME(6) NOT NULL
+);
+
 CREATE TABLE `movies` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `title` VARCHAR(255) NOT NULL,
@@ -237,6 +243,9 @@ CREATE UNIQUE INDEX `IX_role_permissions_role_permission`
 
 CREATE UNIQUE INDEX `IX_user_permissions_user_permission`
   ON `user_permissions` (`user_id`, `permission_id`);
+
+CREATE INDEX `IX_revoked_tokens_expires_at`
+  ON `revoked_tokens` (`expires_at`);
 
 CREATE INDEX `IX_showtimes_movie_start_time`
   ON `showtimes` (`movie_id`, `start_time`);
