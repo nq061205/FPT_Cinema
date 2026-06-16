@@ -1,11 +1,10 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.group6.mvc.fpt_cinema.entity.Role;
 import com.group6.mvc.fpt_cinema.repository.RoleRepository;
 import com.group6.mvc.fpt_cinema.service.RoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RoleServiceImpl
