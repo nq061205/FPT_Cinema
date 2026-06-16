@@ -54,7 +54,7 @@ public class Movie {
     private String description;
 
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "NOW_SHOWING";
+    private String status = "COMING_SOON";
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
