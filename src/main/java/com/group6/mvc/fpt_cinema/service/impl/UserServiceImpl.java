@@ -13,9 +13,13 @@ import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
 import com.group6.mvc.fpt_cinema.dto.request.LoginRequest;
 import com.group6.mvc.fpt_cinema.dto.request.RegisterRequest;
 import com.group6.mvc.fpt_cinema.dto.request.UpdateUserRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UserChangePasswordRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UserProfileEditRequest;
 import com.group6.mvc.fpt_cinema.dto.response.LoginResponse;
 import com.group6.mvc.fpt_cinema.dto.response.RegisterResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UserChangePasswordResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserCreateAccountResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UserProfileResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserResponse;
 import com.group6.mvc.fpt_cinema.entity.Role_Permission;
 import com.group6.mvc.fpt_cinema.entity.User;
@@ -187,8 +191,7 @@ public class UserServiceImpl
                 .map(String::trim)
                 .forEach(effectivePermissions::add);
 
-        for (User_Permission userPermission :
-                userPermissionRepository.findAllWithPermissionByUserId(user.getId())) {
+        for (User_Permission userPermission : userPermissionRepository.findAllWithPermissionByUserId(user.getId())) {
             String permissionCode = userPermission.getPermission().getPermissionCode();
             if (!hasText(permissionCode)) {
                 continue;
@@ -270,16 +273,54 @@ public class UserServiceImpl
             throw new AppException(ErrorCode.PHONE_EXIST);
         }
 
-        User user = userMapper.toEntity(new RegisterRequest(
-                request.getFullName(),
-                request.getEmail(),
-                request.getPhone(),
-                request.getPassword()
-        ));
+        User user = userMapper.toEntity(request);
         user.setRole(roleRepository.findById(RoleIds.CUSTOMER)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)));
 
         User savedUser = userRepository.save(user);
         return userMapper.toRegisterResponse(savedUser);
+    }
+
+    @Override
+    public UserProfileResponse getProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toUserProfileResponse(user);
+    }
+
+    @Override
+    public UserProfileResponse editProfile(String email, UserProfileEditRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        user.setFullName(request.getFullName());
+        user.setPhone(request.getPhone());
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toUserProfileResponse(savedUser);
+    }
+
+    @Override
+    public UserChangePasswordResponse changePassword(String email, UserChangePasswordRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPasswordHash())) {
+            throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_CONFIRM_NOT_MATCH);
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+            throw new AppException(ErrorCode.NEW_PASSWORD_SAME_AS_OLD);
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toChangePasswordResponse(savedUser);
     }
 }

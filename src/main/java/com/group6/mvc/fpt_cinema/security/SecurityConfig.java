@@ -62,19 +62,20 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/register")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/movie/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
-                        .authenticationEntryPoint((request, response, exception) ->
-                                writeSecurityError(response, 401, 1007, "Authentication is required"))
-                        .accessDeniedHandler((request, response, exception) ->
-                                writeSecurityError(response, 403, 1008, "Access denied")))
+                        .authenticationEntryPoint((request, response, exception) -> writeSecurityError(response, 401,
+                                1007, "Authentication is required"))
+                        .accessDeniedHandler((request, response, exception) -> writeSecurityError(response, 403, 1008,
+                                "Access denied")))
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, exception) ->
-                                writeSecurityError(response, 401, 1007, "Authentication is required"))
-                        .accessDeniedHandler((request, response, exception) ->
-                                writeSecurityError(response, 403, 1008, "Access denied")))
+                        .authenticationEntryPoint((request, response, exception) -> writeSecurityError(response, 401,
+                                1007, "Authentication is required"))
+                        .accessDeniedHandler((request, response, exception) -> writeSecurityError(response, 403, 1008,
+                                "Access denied")))
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .build();
