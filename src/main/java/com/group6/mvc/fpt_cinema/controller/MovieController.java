@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
-import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ViewMovieListRequest;
-import com.group6.mvc.fpt_cinema.dto.response.UserCreateAccountResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewMovieListResponse;
 import com.group6.mvc.fpt_cinema.service.MovieService;
-import com.group6.mvc.fpt_cinema.service.UserService;
 
 @RestController
 @RequestMapping("/api/movies")
