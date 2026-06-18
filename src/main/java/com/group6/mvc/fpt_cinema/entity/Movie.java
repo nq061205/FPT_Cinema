@@ -6,8 +6,13 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.group6.mvc.fpt_cinema.enums.MovieGenre;
+import com.group6.mvc.fpt_cinema.enums.MovieStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,8 +37,9 @@ public class Movie {
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "genre", nullable = false, length = 20)
-    private String genre;
+    private MovieGenre genre;
 
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationMinutes;
@@ -53,8 +59,9 @@ public class Movie {
     @Column(name = "description", length = 1000)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "COMING_SOON";
+    private MovieStatus status = MovieStatus.COMING_SOON;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

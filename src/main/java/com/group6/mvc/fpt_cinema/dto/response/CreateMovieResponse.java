@@ -1,5 +1,7 @@
 package com.group6.mvc.fpt_cinema.dto.response;
 
+import com.group6.mvc.fpt_cinema.enums.MovieGenre;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,5 +13,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateMovieResponse {
     private String title;
-    private String genre;
+    private MovieGenre genre;
 }

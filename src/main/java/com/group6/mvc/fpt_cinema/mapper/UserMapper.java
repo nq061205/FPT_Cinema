@@ -66,6 +66,7 @@ public class UserMapper {
     public UserProfileResponse toUserProfileResponse(User user) {
         UserProfileResponse response = new UserProfileResponse();
         response.setFullName(user.getFullName());
+        response.setRoleId(user.getRole().getId());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
         response.setRewardPoints(user.getRewardPoints());

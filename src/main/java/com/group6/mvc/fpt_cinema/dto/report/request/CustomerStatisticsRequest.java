@@ -1,6 +1,7 @@
-package com.group6.mvc.fpt_cinema.dto.response;
+package com.group6.mvc.fpt_cinema.dto.report.request;
 
 import com.group6.mvc.fpt_cinema.enums.MembershipLevel;
+import com.group6.mvc.fpt_cinema.enums.UserStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,13 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileResponse {
-    private String fullName;
-    private Integer roleId;
-    private String email;
-    private String phone;
-    private Integer rewardPoints;
+@NoArgsConstructor
+public class CustomerStatisticsRequest extends ReportFilterRequest {
     private MembershipLevel membershipLevel;
+    private UserStatus userStatus;
 }

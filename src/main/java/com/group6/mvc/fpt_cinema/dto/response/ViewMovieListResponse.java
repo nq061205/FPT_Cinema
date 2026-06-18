@@ -2,6 +2,8 @@ package com.group6.mvc.fpt_cinema.dto.response;
 
 import java.time.LocalDate;
 
+import com.group6.mvc.fpt_cinema.enums.MovieGenre;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ import lombok.Setter;
 public class ViewMovieListResponse {
     private Integer id;
     private String title;
-    private String genre;
+    private MovieGenre genre;
     private Integer durationMinutes;
     private String ageRating;
     private LocalDate releaseDate;

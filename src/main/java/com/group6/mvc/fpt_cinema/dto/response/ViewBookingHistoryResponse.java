@@ -3,6 +3,8 @@ package com.group6.mvc.fpt_cinema.dto.response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.group6.mvc.fpt_cinema.enums.BookingStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,7 @@ public class ViewBookingHistoryResponse {
     private LocalDateTime startTime;
     private String roomName;
     private BigDecimal finalAmount;
-    private String status;
+    private BookingStatus status;
     private LocalDateTime createdAt;
 
 }

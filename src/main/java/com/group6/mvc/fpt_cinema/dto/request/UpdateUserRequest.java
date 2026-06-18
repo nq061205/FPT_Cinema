@@ -1,5 +1,7 @@
 package com.group6.mvc.fpt_cinema.dto.request;
 
+import com.group6.mvc.fpt_cinema.enums.UserStatus;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -27,7 +29,7 @@ public class UpdateUserRequest {
     @Size(min = 8, max = 100, message = "INVALID_USER_DATA")
     private String password;
 
-    private String status;
+    private UserStatus status;
 
     private Integer roleId;
 }

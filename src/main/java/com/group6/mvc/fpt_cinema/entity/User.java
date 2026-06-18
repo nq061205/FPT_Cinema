@@ -5,8 +5,13 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.group6.mvc.fpt_cinema.enums.MembershipLevel;
+import com.group6.mvc.fpt_cinema.enums.UserStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -47,14 +52,16 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "ACTIVE";
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "reward_points", nullable = false)
     private Integer rewardPoints = 0;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "membership_level", nullable = false, length = 20)
-    private String membershipLevel = "BRONZE";
+    private MembershipLevel membershipLevel = MembershipLevel.BRONZE;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
