@@ -179,9 +179,9 @@ public class ChatServiceImpl implements ChatService {
 
     private N8nChatContext buildChatContext() {
         List<N8nMovieContext> movies = movieRepository.findAll(PageRequest.of(
-                        0,
-                        MAX_CONTEXT_MOVIES,
-                        Sort.by(Sort.Direction.DESC, "id")))
+                0,
+                MAX_CONTEXT_MOVIES,
+                Sort.by(Sort.Direction.DESC, "id")))
                 .stream()
                 .map(movie -> new N8nMovieContext(
                         movie.getId(),

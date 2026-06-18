@@ -13,10 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
-import com.group6.mvc.fpt_cinema.dto.request.review.EditReviewRequest;
-import com.group6.mvc.fpt_cinema.dto.request.review.ReviewRequest;
-import com.group6.mvc.fpt_cinema.dto.response.review.ReviewResponse;
+import com.group6.mvc.fpt_cinema.dto.request.EditReviewRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ReviewRequest;
+import com.group6.mvc.fpt_cinema.dto.response.ReviewResponse;
 import com.group6.mvc.fpt_cinema.service.ReviewService;
+
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -29,7 +35,7 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ApiResponse<ReviewResponse> createReview (@RequestBody ReviewRequest request, 
+    public ApiResponse<ReviewResponse> createReview (@RequestBody ReviewRequest request,
         @AuthenticationPrincipal Jwt jwt
     ){
 
@@ -42,24 +48,28 @@ public class ReviewController {
     }
 
     @GetMapping("/movie/{movieId}")
-    public ApiResponse<List<ReviewResponse>> getReviewsByMovie(@PathVariable Integer movieId){
-        return ApiResponse.<List<ReviewResponse>>builder()
-                .message("Review retrieved successfully")
-                .result(reviewService.getReviewsByMovie(movieId))
-                .build();
+    public ApiResponse<Page<ReviewResponse>> getReviewsByMovie(
+    @PathVariable Integer movieId,
+    @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+    return ApiResponse.<Page<ReviewResponse>>builder()
+        .message("Reviews retrieved successfully")
+        .result(reviewService.getReviewsByMovie(movieId, pageable))
+        .build();
     }
 
     @PutMapping("/{reviewId}")
     public ApiResponse<ReviewResponse> editReview(
-        @PathVariable Integer reviewId, 
-        @RequestBody EditReviewRequest request, 
+        @PathVariable Integer reviewId,
+        @RequestBody EditReviewRequest request,
         @AuthenticationPrincipal Jwt jwt
     ){
-        Integer userId = Integer.valueOf(jwt.getClaimAsString("userId")); 
-        ReviewResponse response = reviewService.editReview(reviewId, request, userId); 
+        Integer userId = Integer.valueOf(jwt.getClaimAsString("userId"));
+        ReviewResponse response = reviewService.editReview(reviewId, request, userId);
         return ApiResponse.<ReviewResponse>builder()
         .message("Review updated successfully")
         .result(response)
-        .build(); 
+        .build();
+
     }
 }

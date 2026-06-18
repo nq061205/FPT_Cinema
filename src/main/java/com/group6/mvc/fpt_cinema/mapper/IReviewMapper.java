@@ -1,27 +1,32 @@
-package com.group6.mvc.fpt_cinema.mapper.review;
 
-import com.group6.mvc.fpt_cinema.dto.request.review.ReviewRequest;
+package com.group6.mvc.fpt_cinema.mapper;
+
+import com.group6.mvc.fpt_cinema.dto.request.ReviewRequest;
 import com.group6.mvc.fpt_cinema.entity.Booking;
 import com.group6.mvc.fpt_cinema.entity.Movie;
 import org.mapstruct.Mapper;
 
-import com.group6.mvc.fpt_cinema.dto.response.review.ReviewResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ReviewResponse;
 import com.group6.mvc.fpt_cinema.entity.Review;
 import com.group6.mvc.fpt_cinema.entity.User;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
-public interface ReviewMapper {
+public interface IReviewMapper {
 
     String DEFAULT_AVATAR = "/images/default-avatar.png";
 
+    @Mapping(target = "movieId", source = "movie.id")
     @Mapping(target = "maskedName", source = "customer.fullName", qualifiedByName = "mask")
     @Mapping(target = "avatarUrl", constant = DEFAULT_AVATAR)
     @Mapping(target = "movieTitle", source = "movie.title")
     ReviewResponse toResponse(Review review);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "customer", source = "customer")
+    @Mapping(target = "movie", source = "movie")
+    @Mapping(target = "booking", source = "booking")
     @Mapping(target = "status", constant = "VISIBLE")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

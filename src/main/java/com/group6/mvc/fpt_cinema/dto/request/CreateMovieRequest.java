@@ -2,6 +2,8 @@ package com.group6.mvc.fpt_cinema.dto.request;
 
 import java.time.LocalDateTime;
 
+import com.group6.mvc.fpt_cinema.enums.MovieGenre;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateMovieRequest {
     private String title;
-    private String genre;
+    private MovieGenre genre;
     private Integer durationMinutes;
     private String ageRating;
     private String posterUrl;
