@@ -8,7 +8,7 @@ import com.group6.mvc.fpt_cinema.dto.response.ShowtimeResponse;
 import com.group6.mvc.fpt_cinema.entity.Showtime;
 
 @Mapper(componentModel = "spring")
-public interface ShowtimeMapper {
+public interface IShowtimeMapper {
 
     @Mapping(target = "movieId", source = "movie.id")
     @Mapping(target = "movieTitle", source = "movie.title")

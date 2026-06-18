@@ -8,7 +8,7 @@ import com.group6.mvc.fpt_cinema.dto.response.RoomResponse;
 import com.group6.mvc.fpt_cinema.entity.Room;
 
 @Mapper(componentModel = "spring")
-public interface RoomMapper {
+public interface IRoomMapper {
 
     @Mapping(target = "seatCount", ignore = true)
     RoomResponse toResponse(Room room);

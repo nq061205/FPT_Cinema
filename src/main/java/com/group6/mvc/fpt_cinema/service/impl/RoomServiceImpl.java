@@ -5,7 +5,7 @@ import com.group6.mvc.fpt_cinema.dto.response.RoomResponse;
 import com.group6.mvc.fpt_cinema.entity.Room;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.mapper.RoomMapper;
+import com.group6.mvc.fpt_cinema.mapper.IRoomMapper;
 import com.group6.mvc.fpt_cinema.repository.RoomRepository;
 import com.group6.mvc.fpt_cinema.repository.SeatRepository;
 import com.group6.mvc.fpt_cinema.repository.ShowtimeRepository;
@@ -36,7 +36,7 @@ public class RoomServiceImpl
     private SeatRepository seatRepository;
 
     @Autowired
-    private RoomMapper roomMapper;
+    private IRoomMapper IRoomMapper;
 
 
     public RoomServiceImpl(RoomRepository repository) {
@@ -63,14 +63,14 @@ public class RoomServiceImpl
             throw new AppException(ErrorCode.ROOM_NAME_TOO_LONG);
         }
 
-        Room room = roomMapper.toEntity(request);
+        Room room = IRoomMapper.toEntity(request);
         room.setRoomName(request.getRoomName().trim());
         Room saved = roomRepository.save(room);
         return toResponse(saved);
     }
 
     private RoomResponse toResponse(Room room) {
-        RoomResponse response = roomMapper.toResponse(room);
+        RoomResponse response = IRoomMapper.toResponse(room);
         int seatCount = seatRepository.countByRoomId(room.getId());
         response.setSeatCount(seatCount);
         return response;

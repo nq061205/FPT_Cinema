@@ -9,7 +9,7 @@ import com.group6.mvc.fpt_cinema.entity.Review;
 import com.group6.mvc.fpt_cinema.entity.User;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.mapper.ReviewMapper;
+import com.group6.mvc.fpt_cinema.mapper.IReviewMapper;
 import com.group6.mvc.fpt_cinema.repository.BookingRepository;
 import com.group6.mvc.fpt_cinema.repository.MovieRepository;
 import com.group6.mvc.fpt_cinema.repository.ReviewRepository;
@@ -22,8 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewServiceImpl
@@ -42,7 +40,7 @@ public class ReviewServiceImpl
     private TicketRepository ticketRepository;
 
     @Autowired
-    private ReviewMapper reviewMapper;
+    private IReviewMapper IReviewMapper;
 
 
 
@@ -95,17 +93,17 @@ public class ReviewServiceImpl
 
         User customer = booking.getCustomer();
 
-        Review review = reviewMapper.toEntity(request, customer, movie, booking);
+        Review review = IReviewMapper.toEntity(request, customer, movie, booking);
         Review saved = reviewRepository.save(review);
 
 
-        return reviewMapper.toResponse(saved);
+        return IReviewMapper.toResponse(saved);
     }
 
     @Override
     public Page<ReviewResponse> getReviewsByMovie(Integer movieId, Pageable pageable) {
         return reviewRepository.findByMovieIdAndStatusOrderByCreatedAtDesc(movieId, "VISIBLE", pageable)
-        .map(reviewMapper::toResponse);
+        .map(IReviewMapper::toResponse);
     }
 
     @Override
@@ -132,7 +130,7 @@ public class ReviewServiceImpl
         }
 
         Review saved = reviewRepository.save(review);
-        return reviewMapper.toResponse(saved);
+        return IReviewMapper.toResponse(saved);
     }
 
 }

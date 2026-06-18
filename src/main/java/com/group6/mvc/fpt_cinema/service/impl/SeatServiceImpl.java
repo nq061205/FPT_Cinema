@@ -10,7 +10,7 @@ import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.enums.SeatStatus;
 import com.group6.mvc.fpt_cinema.enums.SeatType;
 import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.mapper.SeatMapper;
+import com.group6.mvc.fpt_cinema.mapper.ISeatMapper;
 import com.group6.mvc.fpt_cinema.repository.RoomRepository;
 import com.group6.mvc.fpt_cinema.repository.SeatRepository;
 import com.group6.mvc.fpt_cinema.service.SeatService;
@@ -31,15 +31,15 @@ public class SeatServiceImpl
 
     private final SeatRepository seatRepository;
     private final RoomRepository roomRepository;
-    private final SeatMapper seatMapper;
+    private final ISeatMapper ISeatMapper;
 
 
 
-    public SeatServiceImpl(SeatRepository seatRepository, RoomRepository roomRepository, SeatMapper seatMapper) {
+    public SeatServiceImpl(SeatRepository seatRepository, RoomRepository roomRepository, ISeatMapper ISeatMapper) {
         super(seatRepository);
         this.seatRepository = seatRepository;
         this.roomRepository = roomRepository;
-        this.seatMapper = seatMapper;
+        this.ISeatMapper = ISeatMapper;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SeatServiceImpl
             seatPage = seatRepository.findByRoomId(roomId, pageable);
         }
 
-        return seatPage.map(seatMapper::toResponse);
+        return seatPage.map(ISeatMapper::toResponse);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class SeatServiceImpl
 
         List<Seat> savedSeats = seatRepository.saveAll(seats);
         return savedSeats.stream()
-                .map(seatMapper::toResponse)
+                .map(ISeatMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -128,7 +128,7 @@ public class SeatServiceImpl
         }
 
         Seat saved = seatRepository.save(seat);
-        return seatMapper.toResponse(saved);
+        return ISeatMapper.toResponse(saved);
     }
 
     @Override
@@ -167,7 +167,7 @@ public class SeatServiceImpl
 
         List<Seat> savedSeats = seatRepository.saveAll(seats);
         return savedSeats.stream()
-                .map(seatMapper::toResponse)
+                .map(ISeatMapper::toResponse)
                 .collect(Collectors.toList());
     }
 

@@ -26,32 +26,32 @@ import com.group6.mvc.fpt_cinema.service.SeatService;
 
 @RestController
 @RequestMapping("/api/rooms/{roomId}/seats")
-public class SeatController {
+public class SeatRoomController {
 
-    private final SeatService seatService; 
+    private final SeatService seatService;
 
-    public SeatController(SeatService seatService){
+    public SeatRoomController(SeatService seatService){
         this.seatService = seatService;
     }
 
     @GetMapping
     public ApiResponse<Page<SeatResponse>> getSeats(
         @PathVariable Integer roomId,
-        @RequestParam(required = false) String status, 
-        @RequestParam(required = false) String seatType, 
+        @RequestParam(required = false) String status,
+        @RequestParam(required = false) String seatType,
         @PageableDefault(size = 50, sort = {"seatRow", "seatNumber"}) Pageable pageable
     ){
         return ApiResponse.<Page<SeatResponse>>builder()
         .message("Seat retrieved successfully")
         .result(seatService.getSeatsByRoom(roomId, status, seatType, pageable))
-        .build(); 
+        .build();
 
     }
 
     @PostMapping("/generate")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<List<SeatResponse>> generateSeats(
-        @PathVariable Integer roomId, 
+        @PathVariable Integer roomId,
         @RequestBody GenerateSeatRequest request
     ){
         return ApiResponse.<List<SeatResponse>>builder()
@@ -65,7 +65,7 @@ public class SeatController {
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<SeatResponse> updateSeat(
         @PathVariable Integer roomId,
-        @PathVariable Integer seatId, 
+        @PathVariable Integer seatId,
         @RequestBody UpdateSeatRequest request
     ){
         return ApiResponse.<SeatResponse>builder()
@@ -78,7 +78,7 @@ public class SeatController {
     @PatchMapping("/batch")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<List<SeatResponse>> batchUpdateSeats(
-        @PathVariable Integer roomId, 
+        @PathVariable Integer roomId,
         @RequestBody BatchUpdateSeatRequest request
     ) {
         return ApiResponse.<List<SeatResponse>>builder()
@@ -89,6 +89,6 @@ public class SeatController {
 
 
 
-    
-    
+
+
 }

@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
-public interface ReviewMapper {
+public interface IReviewMapper {
 
     String DEFAULT_AVATAR = "/images/default-avatar.png";
 

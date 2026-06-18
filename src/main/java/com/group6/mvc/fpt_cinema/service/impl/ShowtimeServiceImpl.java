@@ -7,7 +7,7 @@ import com.group6.mvc.fpt_cinema.entity.Room;
 import com.group6.mvc.fpt_cinema.entity.Showtime;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.mapper.ShowtimeMapper;
+import com.group6.mvc.fpt_cinema.mapper.IShowtimeMapper;
 import com.group6.mvc.fpt_cinema.repository.MovieRepository;
 import com.group6.mvc.fpt_cinema.repository.RoomRepository;
 import com.group6.mvc.fpt_cinema.repository.ShowtimeRepository;
@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class ShowtimeServiceImpl
             @Autowired
             private RoomRepository roomRepository;
             @Autowired
-            private ShowtimeMapper showtimeMapper;
+            private IShowtimeMapper IShowtimeMapper;
 
 
 
@@ -67,7 +66,7 @@ public class ShowtimeServiceImpl
         checkOverlap(request.getRoomId(), request.getStartTime(),
     request.getStartTime().plusMinutes(movie.getDurationMinutes()), null);
 
-    Showtime showtime = showtimeMapper.toEntity(request);
+    Showtime showtime = IShowtimeMapper.toEntity(request);
     showtime.setMovie(movie);
     showtime.setRoom(room);
     Showtime saved = showtimeRepository.save(showtime);
@@ -78,7 +77,7 @@ public class ShowtimeServiceImpl
 
 
     private ShowtimeResponse toResponse(Showtime showtime) {
-      ShowtimeResponse response = showtimeMapper.toResponse(showtime);
+      ShowtimeResponse response = IShowtimeMapper.toResponse(showtime);
       response.setEndTime(showtime.getStartTime()
     .plusMinutes(showtime.getMovie().getDurationMinutes()));
     return response;
@@ -168,10 +167,10 @@ public class ShowtimeServiceImpl
 
     @Override
     public Page<ShowtimeResponse> getAllShowtimes(Integer movieId, Integer roomId, LocalDate date, Pageable pageable) {
-        LocalDateTime startDate = (date != null) ? date.atStartOfDay() : null; 
-        LocalDateTime endDate = (date != null) ? date.plusDays(1).atStartOfDay() : null; 
+        LocalDateTime startDate = (date != null) ? date.atStartOfDay() : null;
+        LocalDateTime endDate = (date != null) ? date.plusDays(1).atStartOfDay() : null;
 
         return showtimeRepository.findFiltered(List.of("CANCELLED"), movieId, roomId, startDate, endDate, pageable)
-        .map(this::toResponse); 
+        .map(this::toResponse);
     }
 }
