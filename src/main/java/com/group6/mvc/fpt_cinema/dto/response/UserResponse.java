@@ -2,6 +2,9 @@ package com.group6.mvc.fpt_cinema.dto.response;
 
 import java.time.LocalDateTime;
 
+import com.group6.mvc.fpt_cinema.enums.MembershipLevel;
+import com.group6.mvc.fpt_cinema.enums.UserStatus;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,9 +17,9 @@ public class UserResponse {
     private String fullName;
     private String email;
     private String phone;
-    private String status;
+    private UserStatus status;
     private Integer rewardPoints;
-    private String membershipLevel;
+    private MembershipLevel membershipLevel;
     private Integer roleId;
     private String role;
     private LocalDateTime createdAt;

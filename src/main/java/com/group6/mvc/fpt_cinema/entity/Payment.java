@@ -5,8 +5,13 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.group6.mvc.fpt_cinema.enums.PaymentMethod;
+import com.group6.mvc.fpt_cinema.enums.PaymentStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,11 +43,13 @@ public class Payment {
     @Column(name = "payment_code", nullable = false, unique = true, length = 80)
     private String paymentCode;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "method", nullable = false, length = 20)
-    private String method;
+    private PaymentMethod method;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "PENDING";
+    private PaymentStatus status = PaymentStatus.PENDING;
 
     @Column(name = "amount", nullable = false, precision = 14, scale = 2)
     private BigDecimal amount;
