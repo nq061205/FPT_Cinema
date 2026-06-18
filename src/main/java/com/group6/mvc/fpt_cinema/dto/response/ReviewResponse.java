@@ -1,4 +1,4 @@
-package com.group6.mvc.fpt_cinema.dto.response.review;
+package com.group6.mvc.fpt_cinema.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -13,14 +13,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ReviewResponse {
-    private Integer id; 
-    private String maskedName; 
-    private String avatarUrl; 
-    private Integer rating; 
-    private String comment; 
-    private LocalDateTime createdAt; 
+    private Integer id;
+    private String maskedName;
+    private String avatarUrl;
+    private Integer rating;
+    private String comment;
+    private LocalDateTime createdAt;
     private String movieTitle;
-    private Integer movieId; 
+    private Integer movieId;
     private LocalDateTime updatedAt;
-    
+
 }

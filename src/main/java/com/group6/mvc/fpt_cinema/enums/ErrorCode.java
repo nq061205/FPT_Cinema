@@ -27,9 +27,7 @@ public enum ErrorCode {
     ROLE_NOT_FOUND(2001, "Role not found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(2002, "User not found", HttpStatus.NOT_FOUND),
     PERMISSION_NOT_FOUND(2003, "Permission not found", HttpStatus.NOT_FOUND),
-    MOVIE_NOT_FOUND(2004, "Movie not found", HttpStatus.NOT_FOUND),
-    REVIEW_NOT_FOUND(2005, "Review not found", HttpStatus.NOT_FOUND),
-    BOOKING_NOT_FOUND(2006, "Booking is not found", HttpStatus.NOT_FOUND),
+
 
     CHAT_CONVERSATION_NOT_FOUND(3001, "Conversation not found", HttpStatus.NOT_FOUND),
     CHAT_CONVERSATION_CLOSED(3002, "Conversation is closed", HttpStatus.CONFLICT),
@@ -37,14 +35,39 @@ public enum ErrorCode {
     CHAT_SERVICE_UNAVAILABLE(3004, "Chat service is unavailable", HttpStatus.BAD_GATEWAY),
 
     INVALID_RATING(3101, "Invalid rating", HttpStatus.BAD_REQUEST),
-    BOOKING_NOT_CONFIRMED(3102, "Booking is not confirmed", HttpStatus.FORBIDDEN),
-    TICKET_NOT_USED(3103, "Ticket haven't used", HttpStatus.FORBIDDEN),
-    MOVIE_MISMATCH(3104, "Movie mismatch", HttpStatus.BAD_REQUEST),
-    SHOWTIME_NOT_PASSED(3105, "Showtime is not passed", HttpStatus.BAD_REQUEST),
-    ALREADY_REVIEW(3106, "You already have reviewed film", HttpStatus.BAD_REQUEST),
-    REVIEW_LIMIT_ACCESS(3107, "You exceed the limit review for a film", HttpStatus.BAD_REQUEST),
-    NOT_REVIEW_OWNER(3108, "You are not owner of review", HttpStatus.FORBIDDEN),
-    EDIT_TIME_EXPIRED(3109, "You can only edit within 24 hours", HttpStatus.BAD_REQUEST);
+    BOOKING_NOT_FOUND(3102, "Booking is not found", HttpStatus.NOT_FOUND),
+    BOOKING_NOT_CONFIRMED(3103, "Booking is not confirmed", HttpStatus.FORBIDDEN),
+    TICKET_NOT_USED(3104, "Ticket haven't used", HttpStatus.FORBIDDEN),
+    MOVIE_MISMATCH(3105, "Movie mismatch", HttpStatus.BAD_REQUEST),
+    SHOWTIME_NOT_PASSED(3106, "Showtime is not passed", HttpStatus.BAD_REQUEST),
+    ALREADY_REVIEW(3107, "You already have reviewed film", HttpStatus.BAD_REQUEST),
+    REVIEW_LIMIT_ACCESS(3108, "You exceed the limit review for a film", HttpStatus.BAD_REQUEST),
+    MOVIE_NOT_FOUND(3109, "Movie not found", HttpStatus.NOT_FOUND),
+    REVIEW_NOT_FOUND(3110,  "Review not found", HttpStatus.NOT_FOUND),
+    NOT_REVIEW_OWNER(3111, "You are not owner of review", HttpStatus.FORBIDDEN),
+    EDIT_TIME_EXPIRED(3112, "You can only edit within 24 hours", HttpStatus.BAD_REQUEST),
+    ROOM_NAME_BLANK(3013, "Room name must not be blank", HttpStatus.BAD_REQUEST),
+    INVALID_ROOM_TYPE(3014, "Invalid room type", HttpStatus.BAD_REQUEST), 
+    ROOM_NAME_EXIST(3015, "Room name already exists",HttpStatus.BAD_REQUEST), 
+    ROOM_NOT_FOUND(3016, "Room not found", HttpStatus.NOT_FOUND),
+
+    ROOM_HAS_ACTIVE_SHOWTIMES(3017, "Cannot close with active showtime", HttpStatus.BAD_REQUEST), 
+    ROOM_NAME_TOO_LONG(4006, "Room name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
+    INVALID_ROOM_STATUS(4007, "Invalid room status", HttpStatus.BAD_REQUEST),
+    SHOWTIME_OVERLAP(5001, "Showtime overlaps with an existing showtime in this room", HttpStatus.CONFLICT),
+    SHOWTIME_NOT_FOUND(5002, "Showtime not found", HttpStatus.NOT_FOUND),
+    SHOWTIME_IN_PAST(5003, "Cannot create showtime in the past", HttpStatus.BAD_REQUEST),
+    INVALID_PRICE(5004, "Base price must be positive", HttpStatus.BAD_REQUEST),
+
+    SEAT_NOT_FOUND(6001, "Seat not found", HttpStatus.NOT_FOUND),
+    SEAT_ALREADY_EXISTS(6002, "Seat already exists in this room", HttpStatus.CONFLICT),
+    INVALID_SEAT_TYPE(6003, "Invalid seat type. Must be NORMAL, VIP, COUPLE, or PREMIUM", HttpStatus.BAD_REQUEST),
+    INVALID_SEAT_STATUS(6004, "Invalid seat status. Must be ACTIVE, LOCKED, or BROKEN", HttpStatus.BAD_REQUEST),
+    SEAT_ROW_BLANK(6005, "Seat row must not be blank", HttpStatus.BAD_REQUEST),
+    INVALID_SEAT_NUMBER(6006, "Seat number must be positive", HttpStatus.BAD_REQUEST),
+    ROOM_NOT_ACTIVE_FOR_SEAT_UPDATE(6007, "Room must be ACTIVE to modify seats", HttpStatus.BAD_REQUEST),
+    ROOM_HAS_EXISTING_SEATS(6008, "Room already has seats configured. Delete existing seats first", HttpStatus.BAD_REQUEST);
+;
 
     private final int code;
     private final String message;
