@@ -27,7 +27,7 @@ public class Promotion {
     private Integer id;
 
     @Column(name = "code", unique = true, length = 80)
-    private String code;
+    private String promotionCode;
 
     @Column(name = "name", nullable = false, length = 150)
     private String name;

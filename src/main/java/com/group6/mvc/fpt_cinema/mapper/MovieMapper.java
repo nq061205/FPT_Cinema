@@ -2,12 +2,10 @@ package com.group6.mvc.fpt_cinema.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
 import com.group6.mvc.fpt_cinema.dto.request.CreateMovieRequest;
 import com.group6.mvc.fpt_cinema.dto.response.CreateMovieResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewMovieListResponse;
 import com.group6.mvc.fpt_cinema.entity.Movie;
-import com.group6.mvc.fpt_cinema.security.EncryptPassword;
 
 @Component
 public class MovieMapper {
