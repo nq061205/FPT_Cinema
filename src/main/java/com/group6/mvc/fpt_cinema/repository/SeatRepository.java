@@ -21,4 +21,5 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     Page<Seat> findByRoomIdAndStatusAndSeatType(Integer roomId, String status, String seatType, Pageable pageable);
 
     List<Seat> findByRoomId(Integer roomId); 
+
 }

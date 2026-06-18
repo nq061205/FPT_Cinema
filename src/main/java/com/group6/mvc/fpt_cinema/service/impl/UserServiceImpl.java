@@ -1,6 +1,7 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,8 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
 import com.group6.mvc.fpt_cinema.dto.request.LoginRequest;
+import com.group6.mvc.fpt_cinema.dto.request.RegisterRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UpdateUserRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UserChangePasswordRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UserProfileEditRequest;
 import com.group6.mvc.fpt_cinema.dto.response.LoginResponse;
+import com.group6.mvc.fpt_cinema.dto.response.RegisterResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UserChangePasswordResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserCreateAccountResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UserProfileResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserResponse;
 import com.group6.mvc.fpt_cinema.entity.Role_Permission;
 import com.group6.mvc.fpt_cinema.entity.User;
@@ -32,6 +40,9 @@ import com.group6.mvc.fpt_cinema.service.UserService;
 public class UserServiceImpl
         extends AbstractCrudService<User, Integer>
         implements UserService {
+
+    private static final Set<String> VALID_USER_STATUSES =
+            Set.of("ACTIVE", "INACTIVE", "LOCKED");
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -128,6 +139,48 @@ public class UserServiceImpl
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponse getUserById(Integer id) {
+        User user = userRepository.findByIdWithRole(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toResponse(user);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateUser(Integer id, UpdateUserRequest request) {
+        if (request == null) {
+            throw new AppException(ErrorCode.INVALID_USER_DATA);
+        }
+
+        User user = userRepository.findByIdWithRole(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        updateFullName(user, request.getFullName());
+        updateEmail(user, request.getEmail());
+        updatePhone(user, request.getPhone());
+        updatePassword(user, request.getPassword());
+        updateStatus(user, request.getStatus());
+
+        if (request.getRoleId() != null) {
+            user.setRole(roleRepository.findById(request.getRoleId())
+                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)));
+        }
+
+        return userMapper.toResponse(userRepository.save(user));
+    }
+
+    @Override
+    @Transactional
+    public UserResponse assignRole(Integer userId, Integer roleId) {
+        User user = userRepository.findByIdWithRole(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setRole(roleRepository.findById(roleId)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)));
+        return userMapper.toResponse(userRepository.save(user));
+    }
+
     private List<String> resolveEffectivePermissions(User user) {
         Set<String> effectivePermissions = new TreeSet<>();
 
@@ -138,8 +191,7 @@ public class UserServiceImpl
                 .map(String::trim)
                 .forEach(effectivePermissions::add);
 
-        for (User_Permission userPermission :
-                userPermissionRepository.findAllWithPermissionByUserId(user.getId())) {
+        for (User_Permission userPermission : userPermissionRepository.findAllWithPermissionByUserId(user.getId())) {
             String permissionCode = userPermission.getPermission().getPermissionCode();
             if (!hasText(permissionCode)) {
                 continue;
@@ -158,5 +210,117 @@ public class UserServiceImpl
 
     private boolean hasText(String value) {
         return value != null && !value.isBlank();
+    }
+
+    private void updateFullName(User user, String fullName) {
+        if (hasText(fullName)) {
+            user.setFullName(fullName.trim());
+        }
+    }
+
+    private void updateEmail(User user, String email) {
+        if (!hasText(email)) {
+            return;
+        }
+
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        userRepository.findOneByEmailIgnoreCase(normalizedEmail)
+                .filter(existingUser -> !existingUser.getId().equals(user.getId()))
+                .ifPresent(existingUser -> {
+                    throw new AppException(ErrorCode.EMAIL_EXIST);
+                });
+        user.setEmail(normalizedEmail);
+    }
+
+    private void updatePhone(User user, String phone) {
+        if (!hasText(phone)) {
+            return;
+        }
+
+        String normalizedPhone = phone.trim();
+        User existingUser = userRepository.getUserByPhone(normalizedPhone);
+        if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.PHONE_EXIST);
+        }
+        user.setPhone(normalizedPhone);
+    }
+
+    private void updatePassword(User user, String password) {
+        if (hasText(password)) {
+            user.setPasswordHash(passwordEncoder.encode(password));
+        }
+    }
+
+    private void updateStatus(User user, String status) {
+        if (!hasText(status)) {
+            return;
+        }
+
+        String normalizedStatus = status.trim().toUpperCase(Locale.ROOT);
+        if (!VALID_USER_STATUSES.contains(normalizedStatus)) {
+            throw new AppException(ErrorCode.INVALID_USER_DATA);
+        }
+        user.setStatus(normalizedStatus);
+    }
+
+    @Override
+    @Transactional
+    public RegisterResponse register(RegisterRequest request) {
+        if (userRepository.getUserByEmail(request.getEmail()) != null) {
+            throw new AppException(ErrorCode.EMAIL_EXIST);
+        }
+        if (userRepository.getUserByPhone(request.getPhone()) != null) {
+            throw new AppException(ErrorCode.PHONE_EXIST);
+        }
+
+        User user = userMapper.toEntity(request);
+        user.setRole(roleRepository.findById(RoleIds.CUSTOMER)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)));
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toRegisterResponse(savedUser);
+    }
+
+    @Override
+    public UserProfileResponse getProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toUserProfileResponse(user);
+    }
+
+    @Override
+    public UserProfileResponse editProfile(String email, UserProfileEditRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        user.setFullName(request.getFullName());
+        user.setPhone(request.getPhone());
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toUserProfileResponse(savedUser);
+    }
+
+    @Override
+    public UserChangePasswordResponse changePassword(String email, UserChangePasswordRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPasswordHash())) {
+            throw new AppException(ErrorCode.INVALID_OLD_PASSWORD);
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_CONFIRM_NOT_MATCH);
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+            throw new AppException(ErrorCode.NEW_PASSWORD_SAME_AS_OLD);
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toChangePasswordResponse(savedUser);
     }
 }

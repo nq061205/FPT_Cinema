@@ -1,18 +1,19 @@
 package com.group6.mvc.fpt_cinema.mapper;
 
-import com.group6.mvc.fpt_cinema.security.EncryptPassword;
 import org.springframework.stereotype.Component;
 
 import com.group6.mvc.fpt_cinema.dto.request.CreateAccountRequest;
+import com.group6.mvc.fpt_cinema.dto.request.RegisterRequest;
+import com.group6.mvc.fpt_cinema.dto.response.RegisterResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UserChangePasswordResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserCreateAccountResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UserProfileResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserResponse;
 import com.group6.mvc.fpt_cinema.entity.User;
+import com.group6.mvc.fpt_cinema.security.EncryptPassword;
 
 @Component
 public class UserMapper {
-
-    public UserMapper() {
-    }
 
     public UserCreateAccountResponse toCreateAccountResponse(User user) {
         UserCreateAccountResponse response = new UserCreateAccountResponse();
@@ -36,6 +37,14 @@ public class UserMapper {
                 .build();
     }
 
+    public RegisterResponse toRegisterResponse(User user) {
+        RegisterResponse response = new RegisterResponse();
+        response.setEmail(user.getEmail());
+        response.setFullName(user.getFullName());
+        response.setPhone(user.getPhone());
+        return response;
+    }
+
     public User toEntity(CreateAccountRequest request) {
         User user = new User();
         user.setPasswordHash(EncryptPassword.encryptPassword(request.getPassword()));
@@ -43,5 +52,30 @@ public class UserMapper {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         return user;
+    }
+
+    public User toEntity(RegisterRequest request) {
+        User user = new User();
+        user.setPasswordHash(EncryptPassword.encryptPassword(request.getPassword()));
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        return user;
+    }
+
+    public UserProfileResponse toUserProfileResponse(User user) {
+        UserProfileResponse response = new UserProfileResponse();
+        response.setFullName(user.getFullName());
+        response.setEmail(user.getEmail());
+        response.setPhone(user.getPhone());
+        response.setRewardPoints(user.getRewardPoints());
+        response.setMembershipLevel(user.getMembershipLevel());
+        return response;
+    }
+
+    public UserChangePasswordResponse toChangePasswordResponse(User user) {
+        UserChangePasswordResponse response = new UserChangePasswordResponse();
+        response.setEmail(user.getEmail());
+        return response;
     }
 }

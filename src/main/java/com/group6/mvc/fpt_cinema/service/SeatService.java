@@ -9,6 +9,10 @@ import com.group6.mvc.fpt_cinema.dto.request.BatchUpdateSeatRequest;
 import com.group6.mvc.fpt_cinema.dto.request.GenerateSeatRequest;
 import com.group6.mvc.fpt_cinema.dto.request.UpdateSeatRequest;
 import com.group6.mvc.fpt_cinema.dto.response.SeatResponse;
+import com.group6.mvc.fpt_cinema.dto.request.ViewSeatMapRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ViewSeatRequest;
+import com.group6.mvc.fpt_cinema.dto.response.ViewSeatMapResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ViewSeatResponse;
 import com.group6.mvc.fpt_cinema.entity.Seat;
 
 public interface SeatService extends CrudService<Seat, Integer> {
@@ -20,4 +24,10 @@ public interface SeatService extends CrudService<Seat, Integer> {
     SeatResponse updateSeat(Integer roomId, Integer seatId, UpdateSeatRequest request);
 
     List<SeatResponse> batchUpdateSeats(Integer roomId, BatchUpdateSeatRequest request);
+
+        ViewSeatMapResponse viewSeatMap(
+                        ViewSeatMapRequest request);
+
+        ViewSeatResponse viewSeats(
+                        ViewSeatRequest request);
 }

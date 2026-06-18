@@ -21,25 +21,53 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import com.group6.mvc.fpt_cinema.dto.request.ViewSeatMapRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ViewSeatRequest;
+import com.group6.mvc.fpt_cinema.dto.response.ViewSeatMapResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ViewSeatResponse;
+
+import com.group6.mvc.fpt_cinema.entity.Showtime;
+import com.group6.mvc.fpt_cinema.mapper.SeatMapper;
+
+import com.group6.mvc.fpt_cinema.repository.ShowtimeRepository;
+import com.group6.mvc.fpt_cinema.repository.TicketRepository;
+
+
 @Service
 public class SeatServiceImpl
-        extends AbstractCrudService<Seat, Integer>
-        implements SeatService {
+                extends AbstractCrudService<Seat, Integer>
+                implements SeatService {
 
     private final SeatRepository seatRepository;
     private final RoomRepository roomRepository;
     private final ISeatMapper ISeatMapper;
+    private final SeatMapper seatMapper;
+
+    private final TicketRepository ticketRepository;
+    private final ShowtimeRepository showtimeRepository;
 
 
+    public SeatServiceImpl(
+            SeatRepository seatRepository,
+            RoomRepository roomRepository,
+            ISeatMapper ISeatMapper,
+            SeatMapper seatMapper,
+            TicketRepository ticketRepository,
+            ShowtimeRepository showtimeRepository) {
 
-    public SeatServiceImpl(SeatRepository seatRepository, RoomRepository roomRepository, ISeatMapper ISeatMapper) {
         super(seatRepository);
+
         this.seatRepository = seatRepository;
         this.roomRepository = roomRepository;
         this.ISeatMapper = ISeatMapper;
+        this.seatMapper = seatMapper;
+        this.ticketRepository = ticketRepository;
+        this.showtimeRepository = showtimeRepository;
     }
 
     @Override
@@ -178,5 +206,67 @@ public class SeatServiceImpl
             index = index / 26 - 1;
         }
         return sb.toString();
+    }
+
+  
+       
+     
+
+    @Override
+    public ViewSeatMapResponse viewSeatMap(
+                        ViewSeatMapRequest request) {
+
+                Integer showtimeId = request.getShowtimeId();
+
+                Showtime showtime = showtimeRepository
+                                .findById(showtimeId)
+                                .orElseThrow(() -> new RuntimeException("Showtime not found"));
+
+                Integer roomId = showtime.getRoom().getId();
+
+                List<Seat> seats = seatRepository.findByRoomId(roomId);
+
+                List<ViewSeatResponse> seatResponses = seats.stream()
+                                .map(seat -> {
+
+                                        ViewSeatResponse dto = seatMapper.toViewSeatResponse(seat);
+
+                                        boolean booked = ticketRepository
+                                                        .existsBySeatIdAndShowtimeIdAndStatus(
+                                                                        seat.getId(),
+                                                                        showtimeId,
+                                                                        "BOOKED");
+
+                                        dto.setStatus(
+                                                        booked
+                                                                        ? "BOOKED"
+                                                                        : "AVAILABLE");
+
+                                        return dto;
+                                })
+                                .toList();
+
+                ViewSeatMapResponse response = new ViewSeatMapResponse();
+
+                response.setRoomId(roomId);
+
+                response.setRoomName(
+                                showtime.getRoom().getRoomName());
+
+                response.setSeats(
+                                seatResponses);
+
+                return response;
+    }
+
+    @Override
+    public ViewSeatResponse viewSeats(
+                        ViewSeatRequest request) {
+
+                Seat seat = seatRepository.findById(
+                                request.getSeatId())
+                                .orElseThrow(() -> new RuntimeException("Seat not found"));
+
+                return seatMapper.toViewSeatResponse(seat);
     }
 }

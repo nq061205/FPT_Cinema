@@ -50,3 +50,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local secrets (không commit) ###
+application-local.properties
+src/main/resources/application-local.properties

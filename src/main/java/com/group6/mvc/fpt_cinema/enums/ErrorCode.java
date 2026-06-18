@@ -16,7 +16,23 @@ public enum ErrorCode {
     ACCOUNT_LOCKED(1006, "Account is locked", HttpStatus.FORBIDDEN),
     UNAUTHORIZED(1007, "Authentication is required", HttpStatus.UNAUTHORIZED),
     ACCESS_DENIED(1008, "Access denied", HttpStatus.FORBIDDEN),
+    INVALID_USER_DATA(1009, "Invalid user data", HttpStatus.BAD_REQUEST),
+    PERMISSION_CODE_EXIST(1010, "Permission code already exists", HttpStatus.CONFLICT),
+    INVALID_PERMISSION_DATA(1011, "Invalid permission data", HttpStatus.BAD_REQUEST),
+    INVALID_INPUT(1012, "Invalid input data", HttpStatus.BAD_REQUEST),
+    INVALID_OLD_PASSWORD(1013, "Old password is incorrect", HttpStatus.BAD_REQUEST),
+    PASSWORD_CONFIRM_NOT_MATCH(1014, "Password confirmation does not match", HttpStatus.BAD_REQUEST),
+    NEW_PASSWORD_SAME_AS_OLD(1015, "New password cannot be the same as old password", HttpStatus.BAD_REQUEST),
+
     ROLE_NOT_FOUND(2001, "Role not found", HttpStatus.NOT_FOUND),
+    USER_NOT_FOUND(2002, "User not found", HttpStatus.NOT_FOUND),
+    PERMISSION_NOT_FOUND(2003, "Permission not found", HttpStatus.NOT_FOUND),
+
+
+    CHAT_CONVERSATION_NOT_FOUND(3001, "Conversation not found", HttpStatus.NOT_FOUND),
+    CHAT_CONVERSATION_CLOSED(3002, "Conversation is closed", HttpStatus.CONFLICT),
+    INVALID_CHAT_MESSAGE(3003, "Chat message is invalid", HttpStatus.BAD_REQUEST),
+    CHAT_SERVICE_UNAVAILABLE(3004, "Chat service is unavailable", HttpStatus.BAD_GATEWAY),
 
     INVALID_RATING(3001, "Invalid rating", HttpStatus.BAD_REQUEST),
     BOOKING_NOT_FOUND(3002, "Booking is not found", HttpStatus.NOT_FOUND),
