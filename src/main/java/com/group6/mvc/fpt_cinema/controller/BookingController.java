@@ -22,7 +22,7 @@ public class BookingController {
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
-    @PostMapping("/view")
+    @PostMapping("/list")
     public ApiResponse<List<ViewBookingHistoryResponse>> viewBookingList(
             @AuthenticationPrincipal Jwt jwt,
             @RequestBody(required = false) ViewBookingHistoryRequest request) {
