@@ -2,6 +2,9 @@ package com.group6.mvc.fpt_cinema.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,29 +17,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
-import com.group6.mvc.fpt_cinema.dto.request.room.RoomRequest;
-import com.group6.mvc.fpt_cinema.dto.request.room.RoomStatusRequest;
-import com.group6.mvc.fpt_cinema.dto.response.room.RoomResponse;
+import com.group6.mvc.fpt_cinema.dto.request.RoomRequest;
+import com.group6.mvc.fpt_cinema.dto.request.RoomStatusRequest;
+import com.group6.mvc.fpt_cinema.dto.response.RoomResponse;
 import com.group6.mvc.fpt_cinema.service.RoomService;
 
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
 
-    private final RoomService roomService; 
+    private final RoomService roomService;
 
     public RoomController(RoomService roomService){
         this.roomService = roomService;
     }
 
     @GetMapping
-    public ApiResponse<List<RoomResponse>> getAllRomm(
-        @RequestParam(required = false) String status, 
-        @RequestParam(required = false) String roomType
+    public ApiResponse<Page<RoomResponse>> getAllRoms(
+        @RequestParam(required = false) String status,
+        @RequestParam(required = false) String roomType, 
+        @PageableDefault(size = 20, sort = "roomName") Pageable pageable
     ){
-        return ApiResponse.<List<RoomResponse>>builder()
+         return ApiResponse.<Page<RoomResponse>>builder()
         .message("Room retrieved successfully")
-        .result(roomService.getAllRooms(status, roomType))
+        .result(roomService.getAllRooms(status, roomType, pageable))
         .build();
     }
 
@@ -45,7 +49,7 @@ public class RoomController {
         return ApiResponse.<RoomResponse>builder()
         .message("Room retrieved successfully")
         .result(roomService.getRoomById(id))
-        .build(); 
+        .build();
     }
 
     @PostMapping
@@ -54,19 +58,19 @@ public class RoomController {
         return ApiResponse.<RoomResponse>builder()
         .message("Room created successfully")
         .result(roomService.createRoom(request))
-        .build(); 
+        .build();
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<RoomResponse> updateRoom(
-        @PathVariable Integer id, 
+        @PathVariable Integer id,
         @RequestBody RoomRequest request
     ){
         return ApiResponse.<RoomResponse>builder()
         .message("Room updated successfully")
         .result(roomService.updateRoom(id, request))
-        .build(); 
+        .build();
     }
 
 
@@ -76,18 +80,18 @@ public class RoomController {
         roomService.deleteRoom(id);
         return ApiResponse.<Void>builder()
         .message("Room closed successfully")
-        .build(); 
+        .build();
     }
-    
+
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse<Void> updateRoomStatus(
-        @PathVariable Integer id, 
+        @PathVariable Integer id,
         @RequestBody RoomStatusRequest request
     ){
         roomService.updateRoomStatus(id, request.getStatus());
         return ApiResponse.<Void>builder()
         .message("Room status updated successfully")
-        .build(); 
+        .build();
     }
 }

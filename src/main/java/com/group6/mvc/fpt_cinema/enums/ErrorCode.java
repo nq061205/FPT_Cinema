@@ -34,13 +34,24 @@ public enum ErrorCode {
     INVALID_ROOM_TYPE(3014, "Invalid room type", HttpStatus.BAD_REQUEST), 
     ROOM_NAME_EXIST(3015, "Room name already exists",HttpStatus.BAD_REQUEST), 
     ROOM_NOT_FOUND(3016, "Room not found", HttpStatus.NOT_FOUND),
+
     ROOM_HAS_ACTIVE_SHOWTIMES(3017, "Cannot close with active showtime", HttpStatus.BAD_REQUEST), 
     ROOM_NAME_TOO_LONG(4006, "Room name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
     INVALID_ROOM_STATUS(4007, "Invalid room status", HttpStatus.BAD_REQUEST),
     SHOWTIME_OVERLAP(5001, "Showtime overlaps with an existing showtime in this room", HttpStatus.CONFLICT),
     SHOWTIME_NOT_FOUND(5002, "Showtime not found", HttpStatus.NOT_FOUND),
     SHOWTIME_IN_PAST(5003, "Cannot create showtime in the past", HttpStatus.BAD_REQUEST),
-    INVALID_PRICE(5004, "Base price must be positive", HttpStatus.BAD_REQUEST); 
+    INVALID_PRICE(5004, "Base price must be positive", HttpStatus.BAD_REQUEST),
+
+    SEAT_NOT_FOUND(6001, "Seat not found", HttpStatus.NOT_FOUND),
+    SEAT_ALREADY_EXISTS(6002, "Seat already exists in this room", HttpStatus.CONFLICT),
+    INVALID_SEAT_TYPE(6003, "Invalid seat type. Must be NORMAL, VIP, COUPLE, or PREMIUM", HttpStatus.BAD_REQUEST),
+    INVALID_SEAT_STATUS(6004, "Invalid seat status. Must be ACTIVE, LOCKED, or BROKEN", HttpStatus.BAD_REQUEST),
+    SEAT_ROW_BLANK(6005, "Seat row must not be blank", HttpStatus.BAD_REQUEST),
+    INVALID_SEAT_NUMBER(6006, "Seat number must be positive", HttpStatus.BAD_REQUEST),
+    ROOM_NOT_ACTIVE_FOR_SEAT_UPDATE(6007, "Room must be ACTIVE to modify seats", HttpStatus.BAD_REQUEST),
+    ROOM_HAS_EXISTING_SEATS(6008, "Room already has seats configured. Delete existing seats first", HttpStatus.BAD_REQUEST);
+;
 
     private final int code;
     private final String message;

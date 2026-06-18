@@ -1,11 +1,12 @@
+
 package com.group6.mvc.fpt_cinema.mapper;
 
-import com.group6.mvc.fpt_cinema.dto.request.review.ReviewRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ReviewRequest;
 import com.group6.mvc.fpt_cinema.entity.Booking;
 import com.group6.mvc.fpt_cinema.entity.Movie;
 import org.mapstruct.Mapper;
 
-import com.group6.mvc.fpt_cinema.dto.response.review.ReviewResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ReviewResponse;
 import com.group6.mvc.fpt_cinema.entity.Review;
 import com.group6.mvc.fpt_cinema.entity.User;
 import org.mapstruct.Mapping;
@@ -23,7 +24,9 @@ public interface ReviewMapper {
     ReviewResponse toResponse(Review review);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "booking", ignore = true)
+    @Mapping(target = "customer", source = "customer")
+    @Mapping(target = "movie", source = "movie")
+    @Mapping(target = "booking", source = "booking")
     @Mapping(target = "status", constant = "VISIBLE")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

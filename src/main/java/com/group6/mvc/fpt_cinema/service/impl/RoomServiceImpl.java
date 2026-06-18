@@ -1,7 +1,7 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
-import com.group6.mvc.fpt_cinema.dto.request.room.RoomRequest;
-import com.group6.mvc.fpt_cinema.dto.response.room.RoomResponse;
+import com.group6.mvc.fpt_cinema.dto.request.RoomRequest;
+import com.group6.mvc.fpt_cinema.dto.response.RoomResponse;
 import com.group6.mvc.fpt_cinema.entity.Room;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.exception.AppException;
@@ -15,10 +15,11 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,21 +27,21 @@ public class RoomServiceImpl
         extends AbstractCrudService<Room, Integer>
         implements RoomService {
 
-    private final RoomRepository roomRepository; 
+    private final RoomRepository roomRepository;
 
     @Autowired
-    private ShowtimeRepository showtimeRepository; 
+    private ShowtimeRepository showtimeRepository;
 
     @Autowired
-    private SeatRepository seatRepository; 
+    private SeatRepository seatRepository;
 
-    @Autowired 
-    private RoomMapper roomMapper; 
+    @Autowired
+    private RoomMapper roomMapper;
 
 
     public RoomServiceImpl(RoomRepository repository) {
         super(repository);
-        this.roomRepository =repository; 
+        this.roomRepository =repository;
     }
 
     @Override
@@ -62,32 +63,32 @@ public class RoomServiceImpl
             throw new AppException(ErrorCode.ROOM_NAME_TOO_LONG);
         }
 
-        Room room = roomMapper.toEntity(request); 
+        Room room = roomMapper.toEntity(request);
         room.setRoomName(request.getRoomName().trim());
-        Room saved = roomRepository.save(room); 
-        return toResponse(saved); 
+        Room saved = roomRepository.save(room);
+        return toResponse(saved);
     }
 
     private RoomResponse toResponse(Room room) {
-        RoomResponse response = roomMapper.toResponse(room); 
-        int seatCount = seatRepository.countByRoomId(room.getId()); 
+        RoomResponse response = roomMapper.toResponse(room);
+        int seatCount = seatRepository.countByRoomId(room.getId());
         response.setSeatCount(seatCount);
-        return response; 
-        
+        return response;
+
     }
 
     private boolean isValidRoomType(String type) {
         return type != null && List.of("STANDARD", "VIP", "IMAX", "FOUR_DX", "DOLBY")
-        .contains(type.toUpperCase()); 
+        .contains(type.toUpperCase());
     }
 
     @Override
     @Transactional
     public RoomResponse updateRoom(Integer id, RoomRequest request) {
-        Room room = roomRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.ROOM_NOT_FOUND)); 
+        Room room = roomRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.ROOM_NOT_FOUND));
 
         if(request.getRoomName() != null && !request.getRoomName().trim().isEmpty()){
-            String newName = request.getRoomName().trim(); 
+            String newName = request.getRoomName().trim();
             if(!newName.equals(room.getRoomName()) && roomRepository.existsByRoomNameAndIdNot(newName, id)){
                 throw new AppException(ErrorCode.ROOM_NAME_EXIST);
             }
@@ -103,30 +104,30 @@ public class RoomServiceImpl
             room.setRoomType(request.getRoomType());
         }
 
-        Room saved = roomRepository.save(room); 
-        return toResponse(saved); 
+        Room saved = roomRepository.save(room);
+        return toResponse(saved);
     }
 
     @Override
     @Transactional
     public void updateRoomStatus(Integer id, String status){
         Room room = roomRepository.findById(id)
-        .orElseThrow(()-> new AppException(ErrorCode.ROOM_NOT_FOUND)); 
+        .orElseThrow(()-> new AppException(ErrorCode.ROOM_NOT_FOUND));
 
-        if(status == null || List.of("ACTIVE", "MAINTENANCE", "CLOSED")
+        if(status == null || !List.of("ACTIVE", "MAINTENANCE", "CLOSED")
             .contains(status.toUpperCase())){
                     throw new AppException(ErrorCode.INVALID_ROOM_STATUS);
-        
+
         }
 
         if("CLOSED".equalsIgnoreCase(status)){
             if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of("CANCELLED", "FINISHED"), LocalDateTime.now())){
-                throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES); 
+                throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES);
             }
         }
 
         room.setStatus(status.toUpperCase());
-        roomRepository.save(room); 
+        roomRepository.save(room);
     }
 
     @Override
@@ -135,33 +136,33 @@ public class RoomServiceImpl
         Room room = roomRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROOM_NOT_FOUND));
 
         if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of("CANCELLED", "FINISHED"), LocalDateTime.now())){
-            throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES); 
+            throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES);
         }
 
         room.setStatus("CLOSED");
-        roomRepository.save(room); 
+        roomRepository.save(room);
     }
 
     @Override
-    public List<RoomResponse> getAllRooms(String status, String roomType) {
-        List<Room> rooms; 
+    public Page<RoomResponse> getAllRooms(String status, String roomType, Pageable pageable) {
+        Page<Room> roomPage;
 
         if(status != null && !status.isEmpty()){
-            rooms = roomRepository.findByStatus(status.toUpperCase());
+            roomPage = roomRepository.findByStatus(status.toUpperCase(), pageable);
 
         }else if(roomType != null && !roomType.isEmpty()){
-            rooms = roomRepository.findByRoomType(roomType.toUpperCase());
+            roomPage = roomRepository.findByRoomType(roomType.toUpperCase(), pageable);
         }else {
-            rooms = roomRepository.findAll(); 
+            roomPage = roomRepository.findAll(pageable);
         }
 
-        return rooms.stream().map(this::toResponse).collect(Collectors.toList()); 
+        return roomPage.map(this::toResponse);
     }
 
     @Override
     public RoomResponse getRoomById(Integer id) {
         Room room = roomRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROOM_NOT_FOUND));
-        return toResponse(room); 
+        return toResponse(room);
     }
 
 

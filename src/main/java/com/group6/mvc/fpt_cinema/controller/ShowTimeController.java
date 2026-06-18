@@ -3,6 +3,9 @@ package com.group6.mvc.fpt_cinema.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
-import com.group6.mvc.fpt_cinema.dto.request.showtime.ShowtimeRequest;
-import com.group6.mvc.fpt_cinema.dto.response.showtime.ShowtimeResponse;
+import com.group6.mvc.fpt_cinema.dto.request.ShowtimeRequest;
+import com.group6.mvc.fpt_cinema.dto.response.ShowtimeResponse;
 import com.group6.mvc.fpt_cinema.service.ShowtimeService;
 
 @RestController
@@ -31,14 +34,15 @@ public class ShowTimeController {
     }
 
     @GetMapping
-    public ApiResponse<List<ShowtimeResponse>> getAllShowtimes(
+    public ApiResponse<Page<ShowtimeResponse>> getAllShowtimes(
         @RequestParam(required = false) Integer movieId,
         @RequestParam(required = false) Integer roomId,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+        @PageableDefault(size = 20, sort = "startTime") Pageable pageable
     ){
-        return ApiResponse.<List<ShowtimeResponse>>builder()
+        return ApiResponse.<Page<ShowtimeResponse>>builder()
         .message("Showtimes retrived successfully")
-        .result(showtimeService.getAllShowtimes(movieId, roomId, date))
+        .result(showtimeService.getAllShowtimes(movieId, roomId, date, pageable))
         .build();
     }
 

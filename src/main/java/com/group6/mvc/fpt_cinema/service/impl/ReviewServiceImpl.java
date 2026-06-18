@@ -1,8 +1,8 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
-import com.group6.mvc.fpt_cinema.dto.request.review.EditReviewRequest;
-import com.group6.mvc.fpt_cinema.dto.request.review.ReviewRequest;
-import com.group6.mvc.fpt_cinema.dto.response.review.ReviewResponse;
+import com.group6.mvc.fpt_cinema.dto.request.EditReviewRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ReviewRequest;
+import com.group6.mvc.fpt_cinema.dto.response.ReviewResponse;
 import com.group6.mvc.fpt_cinema.entity.Booking;
 import com.group6.mvc.fpt_cinema.entity.Movie;
 import com.group6.mvc.fpt_cinema.entity.Review;
@@ -16,6 +16,8 @@ import com.group6.mvc.fpt_cinema.repository.ReviewRepository;
 import com.group6.mvc.fpt_cinema.repository.TicketRepository;
 import com.group6.mvc.fpt_cinema.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,11 +103,9 @@ public class ReviewServiceImpl
     }
 
     @Override
-    public List<ReviewResponse> getReviewsByMovie(Integer movieId) {
-        List<Review> reviews = reviewRepository.findByMovieIdAndStatusOrderByCreatedAtDesc(movieId, "VISIBLE" );
-
-        return reviews.stream().map(reviewMapper::toResponse).collect(Collectors.toList());
-
+    public Page<ReviewResponse> getReviewsByMovie(Integer movieId, Pageable pageable) {
+        return reviewRepository.findByMovieIdAndStatusOrderByCreatedAtDesc(movieId, "VISIBLE", pageable)
+        .map(reviewMapper::toResponse);
     }
 
     @Override

@@ -1,7 +1,6 @@
-package com.group6.mvc.fpt_cinema.dto.request.showtime;
+package com.group6.mvc.fpt_cinema.dto.request;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -15,10 +14,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ShowtimeRequest {
-    private Integer movieId; 
-    private Integer roomId; 
-    private LocalDateTime startTime; 
-    private BigDecimal basePrice; 
+    private Integer movieId;
+    private Integer roomId;
+    private LocalDateTime startTime;
+    private BigDecimal basePrice;
 
-    
+
 }

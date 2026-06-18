@@ -1,4 +1,4 @@
-package com.group6.mvc.fpt_cinema.dto.request.review;
+package com.group6.mvc.fpt_cinema.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

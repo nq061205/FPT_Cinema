@@ -1,16 +1,16 @@
-package com.group6.mvc.fpt_cinema.dto.request.review;
+package com.group6.mvc.fpt_cinema.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditReviewRequest {
-    private Integer rating; 
-    private String comment; 
-    
+public class RoomRequest {
+    private String roomName;
+    private String roomType;
+
 }

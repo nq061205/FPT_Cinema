@@ -1,4 +1,6 @@
-package com.group6.mvc.fpt_cinema.dto.request.room;
+package com.group6.mvc.fpt_cinema.dto.request;
+
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomStatusRequest {
+public class BatchUpdateSeatRequest {
+    private List<Integer> seatIds; 
+    private String seatType; 
     private String status; 
+    
 }
