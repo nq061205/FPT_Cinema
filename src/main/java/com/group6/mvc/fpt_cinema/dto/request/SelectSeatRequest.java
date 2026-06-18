@@ -1,5 +1,7 @@
 package com.group6.mvc.fpt_cinema.dto.request;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +11,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ViewBookingHistoryRequest {
-    private Integer page = 0;
-    private Integer size = 5;
+public class SelectSeatRequest {
+    List<Integer> seatIds;
 }

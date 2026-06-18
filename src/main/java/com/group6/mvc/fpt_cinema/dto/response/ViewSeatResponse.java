@@ -13,4 +13,5 @@ import lombok.Setter;
     private Integer seatNumber;
     private String seatType;
     private String status;
+    private String bookingStatus;
 }

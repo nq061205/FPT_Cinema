@@ -8,4 +8,9 @@ import com.group6.mvc.fpt_cinema.entity.Ticket;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     boolean existsByBookingIdAndStatus(Integer bookingId, String status); 
+    boolean existsBySeatIdAndShowtimeIdAndStatus(
+            Integer seatId,
+            Integer showtimeId,
+            String status);
+
 }
