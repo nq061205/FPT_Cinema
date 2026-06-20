@@ -5,6 +5,6 @@ public enum MovieGenre {
     COMEDY,
     ROMANCE,
     HORROR,
-    SCIFI,
+    SCI_FI,
     DRAMA
 }

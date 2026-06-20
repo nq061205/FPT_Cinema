@@ -26,7 +26,7 @@ public class UserPromotionMapper {
                 userPromotion.getId());
 
         response.setStatus(
-                userPromotion.getStatus());
+                userPromotion.getStatus().name());
 
         response.setAssignedAt(
                 userPromotion.getAssignedAt());

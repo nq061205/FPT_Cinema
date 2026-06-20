@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.group6.mvc.fpt_cinema.dto.response.ViewPromotionResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewUserPromotionListResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewUserPromotionResponse;
 import com.group6.mvc.fpt_cinema.entity.User_Promotion;

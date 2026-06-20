@@ -1,16 +1,72 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.group6.mvc.fpt_cinema.dto.request.ViewProductDetailRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ViewProductListRequest;
+import com.group6.mvc.fpt_cinema.dto.response.ViewProductDetailResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ViewProductListResponse;
 import com.group6.mvc.fpt_cinema.entity.Product;
+import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+import com.group6.mvc.fpt_cinema.exception.AppException;
+import com.group6.mvc.fpt_cinema.mapper.ProductMapper;
 import com.group6.mvc.fpt_cinema.repository.ProductRepository;
 import com.group6.mvc.fpt_cinema.service.ProductService;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ProductServiceImpl
         extends AbstractCrudService<Product, Integer>
         implements ProductService {
 
-    public ProductServiceImpl(ProductRepository repository) {
-        super(repository);
+    private static final Set<String> VALID_TYPES = Set.of("FOOD", "BEVERAGE", "COMBO");
+
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
+
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
+        super(productRepository);
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
+
+    @Override
+    public List<ViewProductListResponse> viewProductList(ViewProductListRequest request) {
+        int page = request == null || request.getPage() == null ? 0 : Math.max(request.getPage(), 0);
+        int size = request == null || request.getSize() == null ? 10 : Math.max(request.getSize(), 1);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
+
+        String type = request != null && request.getProductType() != null
+                ? request.getProductType().toUpperCase().trim()
+                : null;
+
+        if (type != null && !VALID_TYPES.contains(type)) {
+            throw new AppException(ErrorCode.INVALID_PRODUCT_TYPE);
+        }
+
+        Page<Product> productPage = type != null
+                ? productRepository.findByProductTypeAndIsActiveTrue(type, pageable)
+                : productRepository.findByIsActiveTrue(pageable);
+
+        return productPage.getContent()
+                .stream()
+                .map(productMapper::toViewProductListResponse)
+                .toList();
+    }
+
+    @Override
+    public ViewProductDetailResponse viewProductDetail(ViewProductDetailRequest request) {
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        return productMapper.toViewProductDetailResponse(product);
+    }
+
 }
