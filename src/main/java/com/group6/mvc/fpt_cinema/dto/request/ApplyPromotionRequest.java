@@ -1,6 +1,9 @@
 package com.group6.mvc.fpt_cinema.dto.request;
 
+import java.math.BigDecimal;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +13,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ViewPromotionList {
-    private Integer page = 0;
-
-    private Integer size = 5;
-
-    
+public class ApplyPromotionRequest {
+    private Integer promotionId;
 }

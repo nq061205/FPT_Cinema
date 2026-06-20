@@ -2,6 +2,8 @@ package com.group6.mvc.fpt_cinema.entity;
 
 import java.time.LocalDateTime;
 
+import com.group6.mvc.fpt_cinema.enums.UserPromotionStatus;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,8 +46,9 @@ public class User_Promotion {
     )
     private Promotion promotion;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private String status = "AVAILABLE";
+    private UserPromotionStatus status = UserPromotionStatus.AVAILABLE;
 
     @Column(name = "assigned_at", nullable = false)
     private LocalDateTime assignedAt = LocalDateTime.now();

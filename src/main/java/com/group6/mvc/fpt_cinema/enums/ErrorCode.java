@@ -66,8 +66,24 @@ public enum ErrorCode {
     SEAT_ROW_BLANK(6005, "Seat row must not be blank", HttpStatus.BAD_REQUEST),
     INVALID_SEAT_NUMBER(6006, "Seat number must be positive", HttpStatus.BAD_REQUEST),
     ROOM_NOT_ACTIVE_FOR_SEAT_UPDATE(6007, "Room must be ACTIVE to modify seats", HttpStatus.BAD_REQUEST),
-    ROOM_HAS_EXISTING_SEATS(6008, "Room already has seats configured. Delete existing seats first", HttpStatus.BAD_REQUEST);
-;
+    ROOM_HAS_EXISTING_SEATS(6008, "Room already has seats configured. Delete existing seats first", HttpStatus.BAD_REQUEST),
+
+    PROMOTION_NOT_FOUND(7001, "Promotion code not found", HttpStatus.NOT_FOUND),
+    PROMOTION_INACTIVE(7002, "Promotion is not active", HttpStatus.BAD_REQUEST),
+    PROMOTION_EXPIRED(7003, "Promotion has expired", HttpStatus.BAD_REQUEST),
+    PROMOTION_NOT_STARTED(7004, "Promotion is not yet available", HttpStatus.BAD_REQUEST),
+    PROMOTION_ALREADY_USED(7005, "You have already used this promotion", HttpStatus.BAD_REQUEST),
+    INVALID_SUBTOTAL(7006, "Subtotal must be greater than zero", HttpStatus.BAD_REQUEST),
+
+    PRODUCT_NOT_FOUND(8001, "Product not found", HttpStatus.NOT_FOUND),
+    PRODUCT_INACTIVE(8002, "Product is not active", HttpStatus.BAD_REQUEST),
+    INVALID_PRODUCT_TYPE(8003, "Invalid product type. Must be FOOD, BEVERAGE, or COMBO", HttpStatus.BAD_REQUEST),
+    INVALID_QUANTITY(8004, "Quantity must be at least 1", HttpStatus.BAD_REQUEST),
+
+    SHOWTIME_NOT_BOOKABLE(9001, "Showtime is not open for booking", HttpStatus.BAD_REQUEST),
+    NO_SEATS_SELECTED(9002, "At least one seat must be selected", HttpStatus.BAD_REQUEST),
+    SEAT_ALREADY_BOOKED(9003, "One or more seats are already booked", HttpStatus.CONFLICT),
+    SEAT_NOT_IN_SHOWTIME_ROOM(9004, "One or more seats do not belong to the showtime's room", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;

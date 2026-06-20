@@ -1,6 +1,5 @@
 package com.group6.mvc.fpt_cinema.dto.request;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ViewPromotionList {
+public class ViewProductListRequest {
     private Integer page = 0;
-
-    private Integer size = 5;
-
-    
+    private Integer size = 10;
+    private String productType;
 }

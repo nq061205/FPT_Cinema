@@ -3,6 +3,8 @@ package com.group6.mvc.fpt_cinema.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.swing.text.View;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,7 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.dto.request.ShowtimeRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ViewShowTimeListRequest;
 import com.group6.mvc.fpt_cinema.dto.response.ShowtimeResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ViewBookingHistoryResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ViewMovieListResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ViewShowTimeListResponse;
 import com.group6.mvc.fpt_cinema.service.ShowtimeService;
 
 @RestController
@@ -83,5 +89,17 @@ public class ShowTimeController {
         return ApiResponse.<Void>builder()
         .message("Showtime cancelled successfully")
         .build();
+    }
+
+    @PostMapping("/list")
+    public ApiResponse<List<ViewShowTimeListResponse>> getShowtimesByCriteria(
+        @RequestBody ViewShowTimeListRequest request,
+        @PageableDefault(size = 5, sort = "startTime") Pageable pageable
+    ){
+        List<ViewShowTimeListResponse> response = showtimeService.getShowTimesList(request);
+        ApiResponse<List<ViewShowTimeListResponse>> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage("Showtimes list retrieved successfully!");
+        apiResponse.setResult(response);
+        return apiResponse;
     }
 }
