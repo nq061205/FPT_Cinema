@@ -4,6 +4,7 @@ import com.group6.mvc.fpt_cinema.dto.request.RoomRequest;
 import com.group6.mvc.fpt_cinema.dto.response.RoomResponse;
 import com.group6.mvc.fpt_cinema.entity.Room;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+import com.group6.mvc.fpt_cinema.enums.ShowtimeStatus;
 import com.group6.mvc.fpt_cinema.exception.AppException;
 import com.group6.mvc.fpt_cinema.mapper.IRoomMapper;
 import com.group6.mvc.fpt_cinema.repository.RoomRepository;
@@ -121,7 +122,7 @@ public class RoomServiceImpl
         }
 
         if("CLOSED".equalsIgnoreCase(status)){
-            if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of("CANCELLED", "FINISHED"), LocalDateTime.now())){
+            if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of(ShowtimeStatus.CANCELLED, ShowtimeStatus.FINISHED), LocalDateTime.now())){
                 throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES);
             }
         }
@@ -135,7 +136,7 @@ public class RoomServiceImpl
     public void deleteRoom(Integer id) {
         Room room = roomRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROOM_NOT_FOUND));
 
-        if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of("CANCELLED", "FINISHED"), LocalDateTime.now())){
+        if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of(ShowtimeStatus.CANCELLED, ShowtimeStatus.FINISHED), LocalDateTime.now())){
             throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES);
         }
 

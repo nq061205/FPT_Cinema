@@ -23,7 +23,7 @@ public interface IShowtimeMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "movie", ignore = true)
     @Mapping(target = "room", ignore = true)
-    @Mapping(target = "status", constant = "OPEN")
+    @Mapping(target = "status", expression = "java(com.group6.mvc.fpt_cinema.enums.ShowtimeStatus.OPEN)")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Showtime toEntity(ShowtimeRequest request);

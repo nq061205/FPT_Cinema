@@ -2,6 +2,7 @@ package com.group6.mvc.fpt_cinema.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,6 @@ public class ShowtimeResponse {
     private LocalDateTime endTime;
     private BigDecimal basePrice;
     private String status;
+    private Map<String, BigDecimal> seatPrices;
 
 }

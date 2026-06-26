@@ -9,8 +9,10 @@ import com.group6.mvc.fpt_cinema.dto.response.ViewShowTimeListResponse;
 import com.group6.mvc.fpt_cinema.entity.Movie;
 import com.group6.mvc.fpt_cinema.entity.Room;
 import com.group6.mvc.fpt_cinema.entity.Showtime;
+import com.group6.mvc.fpt_cinema.enums.BookingStatus;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.enums.MovieStatus;
+import com.group6.mvc.fpt_cinema.enums.ShowtimeStatus;
 import com.group6.mvc.fpt_cinema.exception.AppException;
 import com.group6.mvc.fpt_cinema.mapper.IShowtimeMapper;
 import com.group6.mvc.fpt_cinema.repository.BookingRepository;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -62,13 +65,11 @@ public class ShowtimeServiceImpl
         this.bookingRepository = bookingRepository;
     }
 
-    private static final String STATUS_OPEN = "OPEN";
-    private static final String STATUS_SOLD_OUT = "SOLD_OUT";
-    private static final String STATUS_CANCELLED = "CANCELLED";
-    private static final String STATUS_FINISHED = "FINISHED";
-    private static final String BOOKING_CONFIRMED = "CONFIRMED";
-    private static final Set<String> TERMINAL_STATUSES = Set.of(STATUS_CANCELLED, STATUS_FINISHED);
-    private static final Set<String> INACTIVE_STATUSES = Set.of(STATUS_CANCELLED, STATUS_FINISHED);
+    private static final ShowtimeStatus STATUS_OPEN = ShowtimeStatus.OPEN;
+    private static final ShowtimeStatus STATUS_CANCELLED = ShowtimeStatus.CANCELLED;
+    private static final ShowtimeStatus STATUS_FINISHED = ShowtimeStatus.FINISHED;
+    private static final BookingStatus BOOKING_CONFIRMED = BookingStatus.CONFIRMED;
+    private static final Set<ShowtimeStatus> TERMINAL_STATUSES = Set.of(STATUS_CANCELLED, STATUS_FINISHED);
 
     @Value("${cinema.opening-time:08:00}")
     private String openingTime;
@@ -146,12 +147,23 @@ public class ShowtimeServiceImpl
         ShowtimeResponse response = IShowtimeMapper.toResponse(showtime);
         response.setEndTime(showtime.getStartTime()
                 .plusMinutes(showtime.getMovie().getDurationMinutes()));
+        response.setSeatPrices(buildSeatPrices(showtime.getBasePrice()));
         return response;
+    }
+
+    
+    private Map<String, BigDecimal> buildSeatPrices(BigDecimal basePrice) {
+        return Map.of(
+            "NORMAL", basePrice,
+            "VIP",    basePrice.multiply(new BigDecimal("1.5")),
+            "COUPLE", basePrice.multiply(new BigDecimal("1.8")),
+            "PREMIUM",basePrice.multiply(new BigDecimal("2.0"))
+        );
     }
 
     private void checkOverlap(Integer roomId, LocalDateTime newStart, LocalDateTime newEnd, Integer excludeId) {
         List<Showtime> existing = showtimeRepository.findByRoomIdAndStatusNotIn(roomId,
-                List.of("CANCELLED", "FINISHED"));
+                List.of(ShowtimeStatus.CANCELLED, ShowtimeStatus.FINISHED));
 
         for (Showtime s : existing) {
             if (excludeId != null && s.getId().equals(excludeId)) {
@@ -262,7 +274,7 @@ public class ShowtimeServiceImpl
         LocalDateTime startDate = (date != null) ? date.atStartOfDay() : null;
         LocalDateTime endDate = (date != null) ? date.plusDays(1).atStartOfDay() : null;
 
-        return showtimeRepository.findFiltered(List.of("CANCELLED"), movieId, roomId, startDate, endDate, pageable)
+        return showtimeRepository.findFiltered(List.of(ShowtimeStatus.CANCELLED), movieId, roomId, startDate, endDate, pageable)
                 .map(this::toResponse);
     }
 
@@ -284,5 +296,11 @@ public class ShowtimeServiceImpl
         }
 
         return  true;
+    }
+
+    public BigDecimal getSeatPrice(Showtime showtime, String seatType){
+        String key = "cinema.seat-price.multiplier." + seatType.toUpperCase();
+        double multiplier = 1.0; 
+        return showtime.getBasePrice().multiply(BigDecimal.valueOf(multiplier));
     }
 }

@@ -2,11 +2,7 @@ package com.group6.mvc.fpt_cinema.controller;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
-import javax.swing.text.View;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,11 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.dto.request.ShowtimeRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ViewSeatMapRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ViewShowTimeListRequest;
 import com.group6.mvc.fpt_cinema.dto.response.ShowtimeResponse;
-import com.group6.mvc.fpt_cinema.dto.response.ViewBookingHistoryResponse;
-import com.group6.mvc.fpt_cinema.dto.response.ViewMovieListResponse;
+import com.group6.mvc.fpt_cinema.dto.response.ViewSeatMapResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewShowTimeListResponse;
+import com.group6.mvc.fpt_cinema.service.SeatService;
 import com.group6.mvc.fpt_cinema.service.ShowtimeService;
 
 @RestController
@@ -36,10 +33,11 @@ import com.group6.mvc.fpt_cinema.service.ShowtimeService;
 public class ShowTimeController {
 
     private final ShowtimeService showtimeService;
+    private final SeatService seatService;
 
-
-    public ShowTimeController(ShowtimeService showtimeService){
+    public ShowTimeController(ShowtimeService showtimeService, SeatService seatService) {
         this.showtimeService = showtimeService;
+        this.seatService = seatService;
     }
 
     @GetMapping
@@ -92,6 +90,17 @@ public class ShowTimeController {
         return ApiResponse.<Void>builder()
         .message("Showtime cancelled successfully")
         .build();
+    }
+
+   
+    @GetMapping("/{id}/seats")
+    public ApiResponse<ViewSeatMapResponse> getSeatMap(@PathVariable Integer id) {
+        ViewSeatMapRequest request = new ViewSeatMapRequest();
+        request.setShowtimeId(id);
+        return ApiResponse.<ViewSeatMapResponse>builder()
+                .message("Seat map retrieved successfully")
+                .result(seatService.viewSeatMap(request))
+                .build();
     }
 
     @PostMapping("/list")

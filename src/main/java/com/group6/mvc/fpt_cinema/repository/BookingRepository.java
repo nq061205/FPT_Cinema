@@ -1,6 +1,7 @@
 package com.group6.mvc.fpt_cinema.repository;
 
 import com.group6.mvc.fpt_cinema.entity.Booking;
+import com.group6.mvc.fpt_cinema.enums.BookingStatus;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     Page<Booking> findByCustomerId(Integer customerId, Pageable pageable);
 
-    long countByShowtimeIdAndStatus(Integer showtimeId, String status); 
+    long countByShowtimeIdAndStatus(Integer showtimeId, BookingStatus status); 
 
     
 }
