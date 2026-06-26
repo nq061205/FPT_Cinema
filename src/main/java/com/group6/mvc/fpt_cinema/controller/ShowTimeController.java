@@ -2,9 +2,11 @@ package com.group6.mvc.fpt_cinema.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.text.View;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -34,6 +36,7 @@ import com.group6.mvc.fpt_cinema.service.ShowtimeService;
 public class ShowTimeController {
 
     private final ShowtimeService showtimeService;
+
 
     public ShowTimeController(ShowtimeService showtimeService){
         this.showtimeService = showtimeService;

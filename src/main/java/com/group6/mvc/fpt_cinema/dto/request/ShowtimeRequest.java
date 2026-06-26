@@ -18,6 +18,7 @@ public class ShowtimeRequest {
     private Integer roomId;
     private LocalDateTime startTime;
     private BigDecimal basePrice;
+    private Integer cleaningBufferMinutes;
 
 
 }

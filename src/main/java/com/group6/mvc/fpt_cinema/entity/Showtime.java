@@ -57,4 +57,7 @@ public class Showtime {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "cleaning_buffer_minutes", nullable = false)
+    private Integer cleaningBufferMinutes = 15; 
+
 }
