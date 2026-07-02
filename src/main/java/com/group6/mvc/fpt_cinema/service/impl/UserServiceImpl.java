@@ -25,6 +25,7 @@ import com.group6.mvc.fpt_cinema.entity.Role_Permission;
 import com.group6.mvc.fpt_cinema.entity.User;
 import com.group6.mvc.fpt_cinema.entity.User_Permission;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+import com.group6.mvc.fpt_cinema.enums.UserStatus;
 import com.group6.mvc.fpt_cinema.exception.AppException;
 import com.group6.mvc.fpt_cinema.mapper.UserMapper;
 import com.group6.mvc.fpt_cinema.repository.RolePermissionRepository;
@@ -40,9 +41,6 @@ import com.group6.mvc.fpt_cinema.service.UserService;
 public class UserServiceImpl
         extends AbstractCrudService<User, Integer>
         implements UserService {
-
-    private static final Set<String> VALID_USER_STATUSES =
-            Set.of("ACTIVE", "INACTIVE", "LOCKED");
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -109,10 +107,10 @@ public class UserServiceImpl
             throw new AppException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        if ("LOCKED".equalsIgnoreCase(user.getStatus())) {
+        if (UserStatus.LOCKED == user.getStatus()) {
             throw new AppException(ErrorCode.ACCOUNT_LOCKED);
         }
-        if (!"ACTIVE".equalsIgnoreCase(user.getStatus())) {
+        if (UserStatus.INACTIVE == user.getStatus()) {
             throw new AppException(ErrorCode.ACCOUNT_INACTIVE);
         }
 
@@ -251,16 +249,11 @@ public class UserServiceImpl
         }
     }
 
-    private void updateStatus(User user, String status) {
-        if (!hasText(status)) {
+    private void updateStatus(User user, UserStatus status) {
+        if (status == null) {
             return;
         }
-
-        String normalizedStatus = status.trim().toUpperCase(Locale.ROOT);
-        if (!VALID_USER_STATUSES.contains(normalizedStatus)) {
-            throw new AppException(ErrorCode.INVALID_USER_DATA);
-        }
-        user.setStatus(normalizedStatus);
+        user.setStatus(status);
     }
 
     @Override

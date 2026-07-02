@@ -11,6 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ViewBookingHistoryRequest {
     private Integer page = 0;
-
     private Integer size = 5;
 }
