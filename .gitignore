@@ -54,3 +54,5 @@ build/
 ### Local secrets (không commit) ###
 application-local.properties
 src/main/resources/application-local.properties
+
+CLAUDE.md

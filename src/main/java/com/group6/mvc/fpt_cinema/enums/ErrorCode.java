@@ -67,6 +67,17 @@ public enum ErrorCode {
     INVALID_SEAT_NUMBER(6006, "Seat number must be positive", HttpStatus.BAD_REQUEST),
     ROOM_NOT_ACTIVE_FOR_SEAT_UPDATE(6007, "Room must be ACTIVE to modify seats", HttpStatus.BAD_REQUEST),
     ROOM_HAS_EXISTING_SEATS(6008, "Room already has seats configured. Delete existing seats first", HttpStatus.BAD_REQUEST),
+ 
+    MOVIE_NOT_SHOWING(5005, "Movie is not currently showing", HttpStatus.BAD_REQUEST),
+    ROOM_NOT_ACTIVE(5006, "Room is not active", HttpStatus.BAD_REQUEST),
+    SHOWTIME_OUTSIDE_HOURS(5007, "Showtime must be within cinema operating hours", HttpStatus.BAD_REQUEST),
+    SHOWTIME_CANNOT_UPDATE(5008, "Cannot update a showtime that is FINISHED or CANCELLED", HttpStatus.BAD_REQUEST),
+    SHOWTIME_HAS_ACTIVE_BOOKINGS(5009, "Cannot cancel showtime with confirmed bookings", HttpStatus.CONFLICT),
+    SHOWTIME_ALREADY_FINISHED(5010, "Showtime has already finished", HttpStatus.BAD_REQUEST),
+    SHOWTIME_ALREADY_CANCELLED(5011, "Showtime is already cancelled", HttpStatus.BAD_REQUEST),
+    BATCH_TOO_LARGE(5012, "Batch cannot exceed 100 showtimes", HttpStatus.BAD_REQUEST),
+    ROOM_DAILY_LIMIT_EXCEEDED(5013, "Room cannot have more than 8 showtimes per day", HttpStatus.BAD_REQUEST),
+    DUPLICATE_SHOWTIME_IN_BATCH(5014, "Duplicate showtime detected in batch", HttpStatus.BAD_REQUEST),
 
     PROMOTION_NOT_FOUND(7001, "Promotion code not found", HttpStatus.NOT_FOUND),
     PROMOTION_INACTIVE(7002, "Promotion is not active", HttpStatus.BAD_REQUEST),
