@@ -3,6 +3,7 @@ package com.group6.mvc.fpt_cinema.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.group6.mvc.fpt_cinema.dto.request.BatchShowtimeRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,9 +21,14 @@ public interface ShowtimeService extends CrudService<Showtime, Integer> {
 
     void cancelShowtime(Integer id);
 
-    Page<ShowtimeResponse> getAllShowtimes(Integer movieId, Integer roomId, LocalDate date, Pageable pageable);
+    Page<ShowtimeResponse> getAllShowtimes(Integer movieId, Integer roomId, LocalDate date,String status,  Pageable pageable);
 
     ShowtimeResponse getShowtimeById(Integer id);
 
     List<ViewShowTimeListResponse> getShowTimesList(ViewShowTimeListRequest request);
+
+    List<ShowtimeResponse> createBatch(BatchShowtimeRequest request);
+
+    List<LocalDate> suggestSlots(Integer movieId, Integer roomId, LocalDate date);
+
 }

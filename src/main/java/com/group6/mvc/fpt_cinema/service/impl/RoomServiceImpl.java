@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,19 +31,25 @@ public class RoomServiceImpl
 
     private final RoomRepository roomRepository;
 
-    @Autowired
+
     private ShowtimeRepository showtimeRepository;
 
-    @Autowired
+
     private SeatRepository seatRepository;
 
-    @Autowired
+
     private IRoomMapper IRoomMapper;
 
-
-    public RoomServiceImpl(RoomRepository repository) {
+    public RoomServiceImpl(JpaRepository<Room, Integer> repository,
+                           RoomRepository roomRepository,
+                           ShowtimeRepository showtimeRepository,
+                           SeatRepository seatRepository,
+                           IRoomMapper IRoomMapper) {
         super(repository);
-        this.roomRepository =repository;
+        this.roomRepository = roomRepository;
+        this.showtimeRepository = showtimeRepository;
+        this.seatRepository = seatRepository;
+        this.IRoomMapper = IRoomMapper;
     }
 
     @Override

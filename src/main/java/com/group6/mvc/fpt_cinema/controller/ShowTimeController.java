@@ -3,6 +3,7 @@ package com.group6.mvc.fpt_cinema.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.group6.mvc.fpt_cinema.dto.request.BatchShowtimeRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -45,11 +46,12 @@ public class ShowTimeController {
         @RequestParam(required = false) Integer movieId,
         @RequestParam(required = false) Integer roomId,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+        @RequestParam(required = false) String status,
         @PageableDefault(size = 20, sort = "startTime") Pageable pageable
     ){
         return ApiResponse.<Page<ShowtimeResponse>>builder()
         .message("Showtimes retrived successfully")
-        .result(showtimeService.getAllShowtimes(movieId, roomId, date, pageable))
+        .result(showtimeService.getAllShowtimes(movieId, roomId, date,status, pageable))
         .build();
     }
 
@@ -69,6 +71,17 @@ public class ShowTimeController {
         .message("Showtime created successfully")
         .result(showtimeService.createShowtime(request))
         .build();
+    }
+
+    @PostMapping("/batch")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ApiResponse<List<ShowtimeResponse>> createBatch(
+            @RequestBody BatchShowtimeRequest request
+            ){
+        return ApiResponse.<List<ShowtimeResponse>>builder()
+                .message("Batch create successfully")
+                .result(showtimeService.createBatch(request))
+                .build();
     }
 
     @PutMapping("/{id}")
@@ -92,7 +105,7 @@ public class ShowTimeController {
         .build();
     }
 
-   
+
     @GetMapping("/{id}/seats")
     public ApiResponse<ViewSeatMapResponse> getSeatMap(@PathVariable Integer id) {
         ViewSeatMapRequest request = new ViewSeatMapRequest();

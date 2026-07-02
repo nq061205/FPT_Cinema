@@ -75,6 +75,9 @@ public enum ErrorCode {
     SHOWTIME_HAS_ACTIVE_BOOKINGS(5009, "Cannot cancel showtime with confirmed bookings", HttpStatus.CONFLICT),
     SHOWTIME_ALREADY_FINISHED(5010, "Showtime has already finished", HttpStatus.BAD_REQUEST),
     SHOWTIME_ALREADY_CANCELLED(5011, "Showtime is already cancelled", HttpStatus.BAD_REQUEST),
+    BATCH_TOO_LARGE(5012, "Batch cannot exceed 100 showtimes", HttpStatus.BAD_REQUEST),
+    ROOM_DAILY_LIMIT_EXCEEDED(5013, "Room cannot have more than 8 showtimes per day", HttpStatus.BAD_REQUEST),
+    DUPLICATE_SHOWTIME_IN_BATCH(5014, "Duplicate showtime detected in batch", HttpStatus.BAD_REQUEST),
 
     PROMOTION_NOT_FOUND(7001, "Promotion code not found", HttpStatus.NOT_FOUND),
     PROMOTION_INACTIVE(7002, "Promotion is not active", HttpStatus.BAD_REQUEST),
