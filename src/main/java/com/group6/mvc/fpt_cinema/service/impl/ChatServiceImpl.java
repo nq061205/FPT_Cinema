@@ -20,6 +20,7 @@ import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.exception.AppException;
 import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatClient;
 import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatContext;
+import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatHistoryMessage;
 import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatRequest;
 import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatResponse;
 import com.group6.mvc.fpt_cinema.integration.n8n.N8nMovieContext;
@@ -34,6 +35,7 @@ public class ChatServiceImpl implements ChatService {
 
     private static final int MAX_MESSAGE_LENGTH = 2000;
     private static final int MAX_CONTEXT_MOVIES = 50;
+    private static final int MAX_HISTORY_MESSAGES = 20;
     private static final Set<String> SUPPORTED_INTENTS = Set.of(
             "MOVIE_LIST",
             "SHOWTIME_LIST",
@@ -89,13 +91,15 @@ public class ChatServiceImpl implements ChatService {
             throw new AppException(ErrorCode.CHAT_CONVERSATION_CLOSED);
         }
 
+        List<N8nChatHistoryMessage> history = buildHistory(conversationId);
+
         saveMessage(conversation, "USER", normalizedMessage, null);
 
         N8nChatResponse n8nResponse = n8nChatClient.sendMessage(new N8nChatRequest(
                 conversationId,
                 userId,
                 normalizedMessage,
-                buildChatContext()));
+                buildChatContext(history)));
 
         String intent = normalizeIntent(n8nResponse.intent());
         saveMessage(conversation, "BOT", n8nResponse.answer().trim(), intent);
@@ -177,7 +181,22 @@ public class ChatServiceImpl implements ChatService {
                 : "GENERAL_CHAT";
     }
 
-    private N8nChatContext buildChatContext() {
+    private List<N8nChatHistoryMessage> buildHistory(Integer conversationId) {
+        List<Ai_Message> messages = messageRepository
+                .findAllByConversationIdOrderByCreatedAtAscIdAsc(conversationId);
+
+        int fromIndex = Math.max(0, messages.size() - MAX_HISTORY_MESSAGES);
+        return messages.subList(fromIndex, messages.size())
+                .stream()
+                .map(message -> new N8nChatHistoryMessage(
+                        "BOT".equalsIgnoreCase(message.getSender())
+                                ? "assistant"
+                                : "user",
+                        message.getContent()))
+                .toList();
+    }
+
+    private N8nChatContext buildChatContext(List<N8nChatHistoryMessage> history) {
         List<N8nMovieContext> movies = movieRepository.findAll(PageRequest.of(
                         0,
                         MAX_CONTEXT_MOVIES,
@@ -194,7 +213,7 @@ public class ChatServiceImpl implements ChatService {
                         movie.getStatus()))
                 .toList();
 
-        return new N8nChatContext(movies);
+        return new N8nChatContext(movies, history);
     }
 
     private ChatConversationResponse toConversationResponse(

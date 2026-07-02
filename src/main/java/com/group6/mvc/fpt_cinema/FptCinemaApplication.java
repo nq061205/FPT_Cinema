@@ -8,6 +8,8 @@ public class FptCinemaApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(FptCinemaApplication.class, args);
+        string s = " abc";
+
     }
 
 }

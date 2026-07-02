@@ -1,0 +1,78 @@
+@startuml Cancellation_Refund
+title Class Diagram - Cancellation & Refund
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+' ===== Tang Controller =====
+class RefundController {
+    - refundService : RefundService
+    --
+    + requestCancellation(bookingId, reason)
+    + viewRequestStatus(requestId)
+    + executeRefund(requestId)
+}
+
+' ===== Tang Service =====
+interface RefundService <<interface>> {
+    + createRefundRequest(bookingId, reason)
+    + executeAutomatedRefund(requestId)
+    + getRequestStatus(requestId)
+}
+
+class RefundServiceImpl {
+    - refundRequestRepository : RefundRequestRepository
+    - paymentGateway : PaymentGateway
+    --
+    + createRefundRequest(bookingId, reason)
+    + executeAutomatedRefund(requestId)
+    + getRequestStatus(requestId)
+}
+
+' ===== Tang Repository =====
+interface RefundRequestRepository <<interface>> {
+    + findByBooking(bookingId)
+    + findByStatus(status)
+}
+
+' ===== Tang Entity =====
+class RefundRequest {
+    + RefundRequestID : int
+    + RefundAmount : decimal
+    + Reason : String
+    + Status : String
+    + RequestedAt : DateTime
+    + ProcessedAt : DateTime
+}
+
+' ===== Class muon tu context khac =====
+class Payment <<(B,#DDDDDD) borrowed>> {
+}
+
+class Booking <<(B,#DDDDDD) borrowed>> {
+}
+
+class Customer <<(B,#DDDDDD) borrowed>> {
+}
+
+interface PaymentGateway <<interface>> {
+    + refund(transactionId, amount)
+}
+
+' ===== Quan he kien truc =====
+RefundController ..> RefundService
+RefundServiceImpl ..|> RefundService
+RefundServiceImpl ..> RefundRequestRepository
+RefundServiceImpl ..> PaymentGateway
+RefundRequestRepository ..> RefundRequest
+
+' ===== Quan he nghiep vu (theo ERD) =====
+Booking "1" -- "0..1" RefundRequest : may have
+Customer "1" -- "*" RefundRequest : requests
+RefundRequest "*" -- "0..1" Payment : processes
+
+@enduml
