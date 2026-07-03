@@ -113,7 +113,7 @@ public interface ReportRepository extends JpaRepository<Booking, Integer> {
                                count(p.id) as orderCount
                         from Payment p
                         join p.booking b
-                        where p.status = COMPLETED
+                        where p.status = PAID
                           and coalesce(p.paidAt, p.createdAt) >= :start
                           and coalesce(p.paidAt, p.createdAt) < :end
                           and (:method is null or p.method = :method)
@@ -133,7 +133,7 @@ public interface ReportRepository extends JpaRepository<Booking, Integer> {
                         join p.booking b
                         join b.showtime s
                         join s.movie m
-                        where p.status = COMPLETED
+                        where p.status = PAID
                           and coalesce(p.paidAt, p.createdAt) >= :start
                           and coalesce(p.paidAt, p.createdAt) < :end
                           and (:method is null or p.method = :method)
@@ -149,7 +149,7 @@ public interface ReportRepository extends JpaRepository<Booking, Integer> {
 
         @Query("""
                         select count(p.id) as total,
-                               sum(case when p.status = COMPLETED then 1 else 0 end) as successful,
+                               sum(case when p.status = PAID then 1 else 0 end) as successful,
                                sum(case when p.status = FAILED then 1 else 0 end) as failed
                         from Payment p
                         where p.createdAt >= :start and p.createdAt < :end
@@ -166,7 +166,7 @@ public interface ReportRepository extends JpaRepository<Booking, Integer> {
                         select p.method as paymentMethod, count(p.id) as transactionCount, sum(p.amount) as amount
                         from Payment p
                         where p.createdAt >= :start and p.createdAt < :end
-                          and p.status = COMPLETED
+                          and p.status = PAID
                           and (:method is null or p.method = :method)
                         group by p.method
                         order by sum(p.amount) desc
