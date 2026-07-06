@@ -2,14 +2,20 @@ package com.group6.mvc.fpt_cinema.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
+import com.group6.mvc.fpt_cinema.dto.request.CreateProductRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UpdateProductRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ViewProductDetailRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ViewProductListRequest;
+import com.group6.mvc.fpt_cinema.dto.response.CreateProductResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UpdateProductResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewProductDetailResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewProductListResponse;
 import com.group6.mvc.fpt_cinema.service.ProductService;
@@ -44,4 +50,24 @@ public class ProductController {
         return response;
     }
 
+    @PostMapping("/create")
+    public ApiResponse<CreateProductResponse> createProduct(
+            @RequestBody CreateProductRequest request) {
+
+        ApiResponse<CreateProductResponse> response = new ApiResponse<>();
+        response.setMessage("Product created successfully!");
+        response.setResult(productService.createProduct(request));
+        return response;
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<UpdateProductResponse> updateProduct(
+            @PathVariable Integer id,
+            @RequestBody UpdateProductRequest request) {
+
+        ApiResponse<UpdateProductResponse> response = new ApiResponse<>();
+        response.setMessage("Product updated successfully!");
+        response.setResult(productService.updateProduct(id, request));
+        return response;
+    }
 }
