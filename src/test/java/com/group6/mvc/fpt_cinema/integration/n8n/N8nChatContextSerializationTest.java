@@ -56,7 +56,7 @@ class N8nChatContextSerializationTest {
                                                         "T13",
                                                         null,
                                                         "Movie description",
-                                                        MovieStatus.NOW_SHOWING)))));
+                                                        MovieStatus.NOW_SHOWING)), List.of())));
 
                         assertThat(receivedBody.get())
                                         .contains("\"context\":{\"movies\":[")
