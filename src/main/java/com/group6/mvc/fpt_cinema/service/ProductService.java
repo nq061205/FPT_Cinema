@@ -13,4 +13,6 @@ public interface ProductService extends CrudService<Product, Integer> {
     List<ViewProductListResponse> viewProductList(ViewProductListRequest request);
 
     ViewProductDetailResponse viewProductDetail(ViewProductDetailRequest request);
+
+
 }

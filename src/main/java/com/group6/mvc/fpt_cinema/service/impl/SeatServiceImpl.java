@@ -96,10 +96,6 @@ public class SeatServiceImpl
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_NOT_FOUND));
 
-        if (seatRepository.countByRoomId(roomId) > 0) {
-            throw new AppException(ErrorCode.ROOM_HAS_EXISTING_SEATS);
-        }
-
         String seatType = request.getSeatType() != null
                 ? request.getSeatType().toUpperCase()
                 : "NORMAL";
@@ -110,9 +106,20 @@ public class SeatServiceImpl
         int rows = request.getRows();
         int seatsPerRow = request.getSeatsPerRow();
 
+        // Find the next available row index based on existing rows
+        List<String> existingRows = seatRepository.findDistinctSeatRowsByRoomId(roomId);
+        int startRowIndex = 0;
+        if (!existingRows.isEmpty()) {
+            int maxIndex = existingRows.stream()
+                    .mapToInt(this::fromRowLabel)
+                    .max()
+                    .orElse(-1);
+            startRowIndex = maxIndex + 1;
+        }
+
         List<Seat> seats = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
-            String rowLabel = toRowLabel(i);
+            String rowLabel = toRowLabel(startRowIndex + i);
             for (int j = 1; j <= seatsPerRow; j++) {
                 Seat seat = new Seat();
                 seat.setRoom(room);
@@ -207,6 +214,40 @@ public class SeatServiceImpl
             index = index / 26 - 1;
         }
         return sb.toString();
+    }
+
+    @Override
+    @Transactional
+    public void deleteSeat(Integer roomId, Integer seatId) {
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new AppException(ErrorCode.SEAT_NOT_FOUND));
+
+        if (!seat.getRoom().getId().equals(roomId)) {
+            throw new AppException(ErrorCode.SEAT_NOT_FOUND);
+        }
+
+        seatRepository.delete(seat);
+    }
+
+    @Override
+    @Transactional
+    public void batchDeleteSeats(Integer roomId, List<Integer> seatIds) {
+        if (seatIds == null || seatIds.isEmpty()) return;
+        List<Seat> seats = seatRepository.findAllById(seatIds);
+        for (Seat seat : seats) {
+            if (!seat.getRoom().getId().equals(roomId)) {
+                throw new AppException(ErrorCode.SEAT_NOT_FOUND);
+            }
+        }
+        seatRepository.deleteAll(seats);
+    }
+
+    private int fromRowLabel(String label) {
+        int index = -1;
+        for (char c : label.toUpperCase().toCharArray()) {
+            index = (index + 1) * 26 + (c - 'A');
+        }
+        return index;
     }
 
   

@@ -87,8 +87,27 @@ public class SeatRoomController {
         .build();
     }
 
+    @org.springframework.web.bind.annotation.DeleteMapping("/{seatId}")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ApiResponse<Void> deleteSeat(
+        @PathVariable Integer roomId,
+        @PathVariable Integer seatId
+    ){
+        seatService.deleteSeat(roomId, seatId);
+        return ApiResponse.<Void>builder()
+        .message("Seat deleted successfully")
+        .build();
+    }
 
-
-
-
+    @org.springframework.web.bind.annotation.DeleteMapping("/batch")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ApiResponse<Void> batchDeleteSeats(
+        @PathVariable Integer roomId,
+        @RequestBody java.util.Map<String, List<Integer>> request
+    ){
+        seatService.batchDeleteSeats(roomId, request.get("seatIds"));
+        return ApiResponse.<Void>builder()
+        .message("Seats deleted successfully")
+        .build();
+    }
 }

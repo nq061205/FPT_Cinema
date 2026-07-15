@@ -15,7 +15,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface IReviewMapper {
 
-    String DEFAULT_AVATAR = "/images/default-avatar.png";
+    String DEFAULT_AVATAR = "https://i.pinimg.com/736x/18/3b/59/183b590ac65cf71f947f33c9de8f7bc8.jpg";
 
     @Mapping(target = "movieId", source = "movie.id")
     @Mapping(target = "maskedName", source = "customer.fullName", qualifiedByName = "mask")

@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,5 +23,8 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
     Page<Seat> findByRoomIdAndStatusAndSeatType(Integer roomId, String status, String seatType, Pageable pageable);
 
     List<Seat> findByRoomId(Integer roomId); 
+
+    @Query("SELECT DISTINCT s.seatRow FROM Seat s WHERE s.room.id = :roomId")
+    List<String> findDistinctSeatRowsByRoomId(@Param("roomId") Integer roomId);
 
 }
