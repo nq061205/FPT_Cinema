@@ -98,7 +98,7 @@ public class ShowtimeServiceImpl
 
         Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_NOT_FOUND));
-        if(movie.getStatus() != MovieStatus.NOW_SHOWING){
+        if (movie.getStatus() != MovieStatus.NOW_SHOWING) {
             throw new AppException(ErrorCode.MOVIE_NOT_SHOWING);
         }
 
@@ -416,11 +416,23 @@ public class ShowtimeServiceImpl
         return List.of();
     }
 
+    @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
+    @org.springframework.transaction.annotation.Transactional
+    public void recoverShowtimeJobs() {
+        LocalDateTime now = LocalDateTime.now();
+       
+        int updated = showtimeRepository.updateMissedShowtimes(now);
+        System.out.println("Recovered/Updated " + updated + " missed showtimes to FINISHED.");
 
-
+      
+        List<Showtime> futureShowtimes = showtimeRepository.findFutureActiveShowtimes(now);
+        for (Showtime showtime : futureShowtimes) {
+            scheduleShowtimeEndJob(showtime);
+        }
+        System.out.println("Rescheduled " + futureShowtimes.size() + " active showtime jobs.");
+    }
 
     public void scheduleShowtimeEndJob(Showtime showtime) {
-        
         LocalDateTime endTime = showtime.getStartTime()
                 .plusMinutes(showtime.getMovie().getDurationMinutes());
 

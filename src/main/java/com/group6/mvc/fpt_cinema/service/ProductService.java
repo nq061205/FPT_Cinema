@@ -18,6 +18,7 @@ public interface ProductService extends CrudService<Product, Integer> {
 
     ViewProductDetailResponse viewProductDetail(ViewProductDetailRequest request);
 
+
     CreateProductResponse createProduct(CreateProductRequest request);
 
     UpdateProductResponse updateProduct(Integer productId, UpdateProductRequest request);

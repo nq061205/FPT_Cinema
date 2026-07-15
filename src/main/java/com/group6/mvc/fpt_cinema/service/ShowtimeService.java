@@ -31,4 +31,5 @@ public interface ShowtimeService extends CrudService<Showtime, Integer> {
 
     List<LocalDate> suggestSlots(Integer movieId, Integer roomId, LocalDate date);
 
+    void scheduleShowtimeEndJob(Showtime showtime);
 }

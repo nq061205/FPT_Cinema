@@ -11,7 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReviewRequest {
     private Integer movieId;
-    private Integer bookingId;
     private Integer rating;
     private String comment;
 

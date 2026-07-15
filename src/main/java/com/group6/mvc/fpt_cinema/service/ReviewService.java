@@ -14,4 +14,7 @@ public interface ReviewService extends CrudService<Review, Integer> {
     Page<ReviewResponse> getReviewsByMovie(Integer movieId, Pageable pageable);
 
     ReviewResponse editReview(Integer reviewId, EditReviewRequest request, Integer userId);
+
+    Page<ReviewResponse> getAllReviews(Integer movieId, Integer rating, Pageable pageable);
+    void deleteReview(Integer reviewId);
 }

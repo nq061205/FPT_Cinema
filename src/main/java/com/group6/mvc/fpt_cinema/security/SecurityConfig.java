@@ -63,6 +63,8 @@ public class SecurityConfig {
                                 "/api/auth/register")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/movie/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/reviews").authenticated()
+
                         .requestMatchers(HttpMethod.GET, "/api/movies/list").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/showtimes/list").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/payment/vnpay/return").permitAll()

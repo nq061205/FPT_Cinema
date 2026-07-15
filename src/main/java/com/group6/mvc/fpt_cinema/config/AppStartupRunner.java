@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.group6.mvc.fpt_cinema.entity.Showtime;
 import com.group6.mvc.fpt_cinema.repository.ShowtimeRepository;
+import com.group6.mvc.fpt_cinema.service.ShowtimeService;
 import com.group6.mvc.fpt_cinema.service.impl.ShowtimeServiceImpl;
 
 import jakarta.transaction.Transactional;
@@ -21,7 +22,7 @@ public class AppStartupRunner implements CommandLineRunner {
     private ShowtimeRepository showtimeRepository;
 
     @Autowired
-    private ShowtimeServiceImpl showtimeService;
+    private ShowtimeService showtimeService;
 
     @Override
     @Transactional
