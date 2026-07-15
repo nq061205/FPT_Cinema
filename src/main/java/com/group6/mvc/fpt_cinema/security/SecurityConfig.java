@@ -63,6 +63,8 @@ public class SecurityConfig {
                                 "/api/auth/register")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/movie/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/movies/list").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/showtimes/list").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

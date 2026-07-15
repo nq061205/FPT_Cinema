@@ -18,6 +18,7 @@ public class MovieMapper {
         response.setGenre(movie.getGenre());
         response.setDurationMinutes(movie.getDurationMinutes());
         response.setAgeRating(movie.getAgeRating());
+        response.setStatus(movie.getStatus());
         response.setReleaseDate(movie.getReleaseDate());
         response.setPosterUrl(movie.getPosterUrl());
         response.setTrailerUrl(movie.getTrailerUrl());

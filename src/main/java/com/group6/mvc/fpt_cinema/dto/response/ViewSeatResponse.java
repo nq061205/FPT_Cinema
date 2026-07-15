@@ -9,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
     public class ViewSeatResponse {
+    private Integer id;
     private String seatRow;
     private Integer seatNumber;
     private String seatType;

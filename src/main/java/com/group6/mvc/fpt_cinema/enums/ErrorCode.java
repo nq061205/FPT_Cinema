@@ -83,7 +83,12 @@ public enum ErrorCode {
     SHOWTIME_NOT_BOOKABLE(9001, "Showtime is not open for booking", HttpStatus.BAD_REQUEST),
     NO_SEATS_SELECTED(9002, "At least one seat must be selected", HttpStatus.BAD_REQUEST),
     SEAT_ALREADY_BOOKED(9003, "One or more seats are already booked", HttpStatus.CONFLICT),
-    SEAT_NOT_IN_SHOWTIME_ROOM(9004, "One or more seats do not belong to the showtime's room", HttpStatus.BAD_REQUEST);
+    SEAT_NOT_IN_SHOWTIME_ROOM(9004, "One or more seats do not belong to the showtime's room", HttpStatus.BAD_REQUEST),
+
+    BOOKING_ALREADY_PAID(9101, "Booking has already been paid", HttpStatus.BAD_REQUEST),
+    BOOKING_EXPIRED(9102, "Booking has expired", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_PENDING(9103, "Booking is not in PENDING status", HttpStatus.BAD_REQUEST),
+    INVALID_PAYMENT_METHOD(9104, "Invalid payment method. Must be CASH or VNPAY", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;
