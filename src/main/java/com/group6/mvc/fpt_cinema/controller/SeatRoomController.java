@@ -49,7 +49,7 @@ public class SeatRoomController {
     }
 
     @PostMapping("/generate")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SEAT_MANAGE')")
     public ApiResponse<List<SeatResponse>> generateSeats(
         @PathVariable Integer roomId,
         @RequestBody GenerateSeatRequest request
@@ -62,7 +62,7 @@ public class SeatRoomController {
 
 
     @PutMapping("/{seatId}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SEAT_MANAGE')")
     public ApiResponse<SeatResponse> updateSeat(
         @PathVariable Integer roomId,
         @PathVariable Integer seatId,
@@ -76,7 +76,7 @@ public class SeatRoomController {
 
 
     @PatchMapping("/batch")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SEAT_MANAGE')")
     public ApiResponse<List<SeatResponse>> batchUpdateSeats(
         @PathVariable Integer roomId,
         @RequestBody BatchUpdateSeatRequest request

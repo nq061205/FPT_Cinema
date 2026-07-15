@@ -3,6 +3,7 @@ package com.group6.mvc.fpt_cinema.dto.response;
 import java.time.LocalDate;
 
 import com.group6.mvc.fpt_cinema.enums.MovieGenre;
+import com.group6.mvc.fpt_cinema.enums.MovieStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,5 +23,6 @@ public class ViewMovieListResponse {
     private LocalDate releaseDate;
     private String posterUrl;
     private String trailerUrl;
+    private MovieStatus status;
     private String description;
 }

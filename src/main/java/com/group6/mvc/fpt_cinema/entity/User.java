@@ -1,5 +1,6 @@
 package com.group6.mvc.fpt_cinema.entity;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -70,5 +71,10 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // Mọi access token phát trước mốc này đều bị coi là hết hiệu lực
+    // (dùng để thu hồi toàn bộ phiên khi người dùng đổi mật khẩu).
+    @Column(name = "tokens_valid_from")
+    private Instant tokensValidFrom;
 
 }

@@ -31,6 +31,7 @@ import com.group6.mvc.fpt_cinema.entity.User_Promotion;
 import com.group6.mvc.fpt_cinema.enums.BookingChannel;
 import com.group6.mvc.fpt_cinema.enums.BookingStatus;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+import com.group6.mvc.fpt_cinema.enums.ShowtimeStatus;
 import com.group6.mvc.fpt_cinema.enums.UserPromotionStatus;
 import com.group6.mvc.fpt_cinema.exception.AppException;
 import com.group6.mvc.fpt_cinema.mapper.BookingMapper;
@@ -110,7 +111,12 @@ public class BookingServiceImpl
 
         Showtime showtime = showtimeRepository.findById(request.getShowtimeId())
                 .orElseThrow(() -> new AppException(ErrorCode.SHOWTIME_NOT_FOUND));
-        if (!"OPEN".equals(showtime.getStatus())) {
+        // Showtime.status is persisted as an enum, not a String. Comparing the
+        // enum to the literal "OPEN" made every booking fail, even when the
+        // database row was OPEN. Also reject a showtime after it has started;
+        // the scheduler may only mark it FINISHED after the movie ends.
+        if (showtime.getStatus() != ShowtimeStatus.OPEN
+                || !showtime.getStartTime().isAfter(LocalDateTime.now())) {
             throw new AppException(ErrorCode.SHOWTIME_NOT_BOOKABLE);
         }
 

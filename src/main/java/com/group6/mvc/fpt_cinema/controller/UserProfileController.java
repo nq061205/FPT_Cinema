@@ -14,6 +14,8 @@ import com.group6.mvc.fpt_cinema.dto.response.UserChangePasswordResponse;
 import com.group6.mvc.fpt_cinema.dto.response.UserProfileResponse;
 import com.group6.mvc.fpt_cinema.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/profile")
 public class UserProfileController {
@@ -38,7 +40,7 @@ public class UserProfileController {
 
     @PatchMapping("/edit")
     public ApiResponse<UserProfileResponse> editProfile(Authentication authentication,
-            @RequestBody UserProfileEditRequest request) {
+            @Valid @RequestBody UserProfileEditRequest request) {
         String email = authentication.getName();
         UserProfileResponse updatedProfile = userService.editProfile(email, request);
 

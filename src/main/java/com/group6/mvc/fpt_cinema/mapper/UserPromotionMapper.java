@@ -12,12 +12,15 @@ public class UserPromotionMapper {
     public ViewUserPromotionResponse toResponse(
             User_Promotion userPromotion) {
 
-        ViewPromotionResponse promotion =
-                new ViewPromotionResponse(
-                        userPromotion.getPromotion().getName(),
-                        userPromotion.getPromotion().getPromotionType(),
-                        userPromotion.getPromotion().getDiscountValue(),
-                        userPromotion.getPromotion().getIsActive());
+        ViewPromotionResponse promotion = new ViewPromotionResponse();
+        promotion.setId(userPromotion.getPromotion().getId());
+        promotion.setPromotionCode(userPromotion.getPromotion().getPromotionCode());
+        promotion.setName(userPromotion.getPromotion().getName());
+        promotion.setPromotionType(userPromotion.getPromotion().getPromotionType());
+        promotion.setDiscountValue(userPromotion.getPromotion().getDiscountValue());
+        promotion.setStartDate(userPromotion.getPromotion().getStartDate());
+        promotion.setEndDate(userPromotion.getPromotion().getEndDate());
+        promotion.setIsActive(userPromotion.getPromotion().getIsActive());
 
         ViewUserPromotionResponse response =
                 new ViewUserPromotionResponse();

@@ -1,5 +1,6 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -312,6 +313,9 @@ public class UserServiceImpl
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        // Thu hồi toàn bộ phiên đăng nhập (gồm cả phiên hiện tại):
+        // mọi access token phát trước thời điểm này sẽ bị từ chối.
+        user.setTokensValidFrom(Instant.now());
         User savedUser = userRepository.save(user);
 
         return userMapper.toChangePasswordResponse(savedUser);

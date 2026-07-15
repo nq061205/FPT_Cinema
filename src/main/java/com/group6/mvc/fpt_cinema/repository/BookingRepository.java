@@ -19,6 +19,10 @@ import org.springframework.stereotype.Repository;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Optional<Booking> findByIdAndCustomerId(Integer id, Integer customerId);
 
+    Optional<Booking> findByBookingCode(String bookingCode);
+
+    Optional<Booking> findByBookingCodeAndCustomerId(String bookingCode, Integer customerId);
+
     Page<Booking> findByCustomerId(Integer customerId, Pageable pageable);
 
     long countByShowtimeIdAndStatus(Integer showtimeId, BookingStatus status); 

@@ -65,7 +65,7 @@ public class ShowTimeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<ShowtimeResponse> createShowtime(@RequestBody ShowtimeRequest request){
         return ApiResponse.<ShowtimeResponse>builder()
         .message("Showtime created successfully")
@@ -74,7 +74,7 @@ public class ShowTimeController {
     }
 
     @PostMapping("/batch")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<List<ShowtimeResponse>> createBatch(
             @RequestBody BatchShowtimeRequest request
             ){
@@ -85,7 +85,7 @@ public class ShowTimeController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<ShowtimeResponse> updateShowtime(
         @PathVariable Integer id,
         @RequestBody ShowtimeRequest request
@@ -97,7 +97,7 @@ public class ShowTimeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<Void> cancelShowtime(@PathVariable Integer id){
         showtimeService.cancelShowtime(id);
         return ApiResponse.<Void>builder()

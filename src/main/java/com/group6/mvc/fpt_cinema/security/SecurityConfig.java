@@ -64,8 +64,11 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/movie/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/reviews").authenticated()
-                        .anyRequest().authenticated()
-                )
+
+                        .requestMatchers(HttpMethod.GET, "/api/movies/list").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/showtimes/list").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/payment/vnpay/return").permitAll()
+                        .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
                         .authenticationEntryPoint((request, response, exception) -> writeSecurityError(response, 401,
@@ -123,13 +126,15 @@ public class SecurityConfig {
     JwtDecoder jwtDecoder(
             SecretKey jwtSecretKey,
             @Value("${security.jwt.issuer}") String issuer,
-            RevokedTokenValidator revokedTokenValidator) {
+            RevokedTokenValidator revokedTokenValidator,
+            SessionValidityValidator sessionValidityValidator) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSecretKey)
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
         decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 JwtValidators.createDefaultWithIssuer(issuer),
-                revokedTokenValidator));
+                revokedTokenValidator,
+                sessionValidityValidator));
         return decoder;
     }
 

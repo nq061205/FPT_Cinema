@@ -12,10 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewSeatResponse {
+    private Integer id;
     private String seatRow;
     private Integer seatNumber;
     private String seatType;
     private String status;
     private String bookingStatus;
-    private BigDecimal price;  
+    private BigDecimal price;
 }

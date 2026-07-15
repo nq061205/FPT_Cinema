@@ -1,7 +1,10 @@
 package com.group6.mvc.fpt_cinema.service;
 
+import java.util.List;
+
 import com.group6.mvc.fpt_cinema.dto.request.ApplyPromotionRequest;
 import com.group6.mvc.fpt_cinema.dto.request.SelectPromotionRequest;
+import com.group6.mvc.fpt_cinema.dto.request.ViewPromotionList;
 import com.group6.mvc.fpt_cinema.dto.response.ApplyPromotionResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewPromotionResponse;
 import com.group6.mvc.fpt_cinema.entity.Promotion;
@@ -11,4 +14,6 @@ public interface PromotionService extends CrudService<Promotion, Integer> {
     ViewPromotionResponse viewPromotion(SelectPromotionRequest request);
 
     ApplyPromotionResponse applyPromotion(Integer userId, ApplyPromotionRequest request);
+
+    List<ViewPromotionResponse> viewPromotionList(ViewPromotionList request);
 }
