@@ -14,5 +14,5 @@ import lombok.Setter;
 public class RevenueTrendItem {
     private String period;
     private BigDecimal revenue;
-    private Long orderCount;
+    private Integer orderCount;
 }

@@ -4,6 +4,7 @@ import com.group6.mvc.fpt_cinema.dto.request.RoomRequest;
 import com.group6.mvc.fpt_cinema.dto.response.RoomResponse;
 import com.group6.mvc.fpt_cinema.entity.Room;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+import com.group6.mvc.fpt_cinema.enums.ShowtimeStatus;
 import com.group6.mvc.fpt_cinema.exception.AppException;
 import com.group6.mvc.fpt_cinema.mapper.IRoomMapper;
 import com.group6.mvc.fpt_cinema.repository.RoomRepository;
@@ -20,6 +21,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,19 +31,25 @@ public class RoomServiceImpl
 
     private final RoomRepository roomRepository;
 
-    @Autowired
+
     private ShowtimeRepository showtimeRepository;
 
-    @Autowired
+
     private SeatRepository seatRepository;
 
-    @Autowired
+
     private IRoomMapper IRoomMapper;
 
-
-    public RoomServiceImpl(RoomRepository repository) {
+    public RoomServiceImpl(JpaRepository<Room, Integer> repository,
+                           RoomRepository roomRepository,
+                           ShowtimeRepository showtimeRepository,
+                           SeatRepository seatRepository,
+                           IRoomMapper IRoomMapper) {
         super(repository);
-        this.roomRepository =repository;
+        this.roomRepository = roomRepository;
+        this.showtimeRepository = showtimeRepository;
+        this.seatRepository = seatRepository;
+        this.IRoomMapper = IRoomMapper;
     }
 
     @Override
@@ -121,7 +129,7 @@ public class RoomServiceImpl
         }
 
         if("CLOSED".equalsIgnoreCase(status)){
-            if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of("CANCELLED", "FINISHED"), LocalDateTime.now())){
+            if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of(ShowtimeStatus.CANCELLED, ShowtimeStatus.FINISHED), LocalDateTime.now())){
                 throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES);
             }
         }
@@ -135,7 +143,7 @@ public class RoomServiceImpl
     public void deleteRoom(Integer id) {
         Room room = roomRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ROOM_NOT_FOUND));
 
-        if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of("CANCELLED", "FINISHED"), LocalDateTime.now())){
+        if(showtimeRepository.existsByRoomIdAndStatusNotInAndStartTimeAfter(id, List.of(ShowtimeStatus.CANCELLED, ShowtimeStatus.FINISHED), LocalDateTime.now())){
             throw new AppException(ErrorCode.ROOM_HAS_ACTIVE_SHOWTIMES);
         }
 

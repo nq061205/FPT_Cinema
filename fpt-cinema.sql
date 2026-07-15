@@ -111,6 +111,7 @@ CREATE TABLE `showtimes` (
   `room_id` INT NOT NULL,
   `start_time` DATETIME NOT NULL,
   `base_price` DECIMAL(12,2) NOT NULL,
+  `cleaning_buffer_minutes` INT NOT NULL DEFAULT 15,
   `status` VARCHAR(20) NOT NULL DEFAULT 'OPEN'
       CHECK (`status` IN ('OPEN','SOLD_OUT','CANCELLED','FINISHED')),
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

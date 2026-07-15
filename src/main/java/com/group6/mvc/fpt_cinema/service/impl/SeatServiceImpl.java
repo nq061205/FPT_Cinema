@@ -15,6 +15,7 @@ import com.group6.mvc.fpt_cinema.repository.RoomRepository;
 import com.group6.mvc.fpt_cinema.repository.SeatRepository;
 import com.group6.mvc.fpt_cinema.service.SeatService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -242,6 +243,9 @@ public class SeatServiceImpl
                                                                         ? "BOOKED"
                                                                         : "AVAILABLE");
 
+                                        dto.setPrice(calculateSeatPrice(
+                                                showtime.getBasePrice(), seat.getSeatType()));
+
                                         return dto;
                                 })
                                 .toList();
@@ -268,5 +272,15 @@ public class SeatServiceImpl
                                 .orElseThrow(() -> new RuntimeException("Seat not found"));
 
                 return seatMapper.toViewSeatResponse(seat);
+    }
+
+    
+    private BigDecimal calculateSeatPrice(BigDecimal basePrice, String seatType) {
+        return switch (seatType) {
+            case "VIP"     -> basePrice.multiply(new BigDecimal("1.5"));
+            case "COUPLE"  -> basePrice.multiply(new BigDecimal("1.8"));
+            case "PREMIUM" -> basePrice.multiply(new BigDecimal("2.0"));
+            default        -> basePrice; 
+        };
     }
 }

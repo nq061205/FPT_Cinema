@@ -1,5 +1,12 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import com.group6.mvc.fpt_cinema.dto.request.CreateMovieRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ViewMovieListRequest;
 import com.group6.mvc.fpt_cinema.dto.response.CreateMovieResponse;
@@ -10,13 +17,6 @@ import com.group6.mvc.fpt_cinema.repository.MovieRepository;
 import com.group6.mvc.fpt_cinema.service.MovieService;
 
 import jakarta.transaction.Transactional;
-
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 @Service
 public class MovieServiceImpl
@@ -67,4 +67,6 @@ public class MovieServiceImpl
                 Movie savedMovie = movieRepository.save(movie);
                 return movieMapper.toCreateMovieResponse(savedMovie);
         }
+
+        
 }
