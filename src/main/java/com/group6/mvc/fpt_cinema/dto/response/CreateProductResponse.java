@@ -16,6 +16,7 @@ public class CreateProductResponse {
     private Integer id;
     private String name;
     private String productType;
+    private String imageUrl;
     private BigDecimal price;
     private Boolean isActive;
     private LocalDateTime createdAt;

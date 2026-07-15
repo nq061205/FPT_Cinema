@@ -11,11 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ViewProductListResponse {
-    private Integer id;
-    private String name;
-    private String productType;
-    private String imageUrl;
-    private BigDecimal price;
-    private Boolean isActive;
+public class ProcessPaymentProductResponse {
+    private String productName;
+    private Integer quantity;
+    private BigDecimal unitPrice;
+    private BigDecimal totalPrice;
 }

@@ -1,6 +1,7 @@
 package com.group6.mvc.fpt_cinema.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     boolean existsBySeatIdAndShowtimeIdAndStatus(Integer seatId, Integer showtimeId, String status);
 
     List<Ticket> findByBookingId(Integer bookingId);
+
+    Optional<Ticket> findByTicketCode(String ticketCode);
 }

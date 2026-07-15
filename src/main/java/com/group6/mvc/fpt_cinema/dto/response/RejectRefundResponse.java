@@ -1,7 +1,9 @@
 package com.group6.mvc.fpt_cinema.dto.response;
+
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,13 +12,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ViewUserPromotionResponse {
-
-    private Integer userPromotionId;
-
-    private String status;
-
-    private LocalDateTime assignedAt;
-
-    private ViewPromotionResponse promotion;
+@Builder
+public class RejectRefundResponse {
+    private String bookingCode;
+    private String reason;
+    private LocalDateTime rejectedAt;
 }

@@ -88,7 +88,19 @@ public enum ErrorCode {
     BOOKING_ALREADY_PAID(9101, "Booking has already been paid", HttpStatus.BAD_REQUEST),
     BOOKING_EXPIRED(9102, "Booking has expired", HttpStatus.BAD_REQUEST),
     BOOKING_NOT_PENDING(9103, "Booking is not in PENDING status", HttpStatus.BAD_REQUEST),
-    INVALID_PAYMENT_METHOD(9104, "Invalid payment method. Must be CASH or VNPAY", HttpStatus.BAD_REQUEST);
+    INVALID_PAYMENT_METHOD(9104, "Invalid payment method. Must be CASH or VNPAY", HttpStatus.BAD_REQUEST),
+
+    PAYMENT_NOT_FOUND(9201, "Payment not found for this booking", HttpStatus.NOT_FOUND),
+    REFUND_ALREADY_REQUESTED(9202, "Refund has already been requested for this booking", HttpStatus.BAD_REQUEST),
+    REFUND_ALREADY_COMPLETED(9203, "Refund has already been completed for this booking", HttpStatus.BAD_REQUEST),
+    REFUND_NOT_REQUESTED(9204, "No refund request found for this booking", HttpStatus.BAD_REQUEST),
+    INVALID_REFUND_METHOD(9205, "Invalid refund method. Must be ONLINE or CASH", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_COMPLETED(9207, "Refund is only available after the booking is COMPLETED (all tickets checked in)", HttpStatus.BAD_REQUEST),
+
+    TICKET_NOT_FOUND(6101, "Ticket not found", HttpStatus.NOT_FOUND),
+    TICKET_ALREADY_USED(6102, "Ticket has already been used", HttpStatus.BAD_REQUEST),
+    TICKET_INVALID_STATUS(6103, "Ticket status is invalid for check-in. Must be BOOKED", HttpStatus.BAD_REQUEST),
+    TICKET_BOOKING_NOT_CONFIRMED(6104, "Booking associated with this ticket is not confirmed", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;

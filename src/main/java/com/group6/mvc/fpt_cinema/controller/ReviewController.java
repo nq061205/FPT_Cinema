@@ -16,6 +16,7 @@ import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.dto.request.EditReviewRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ReviewRequest;
 import com.group6.mvc.fpt_cinema.dto.response.ReviewResponse;
+import com.group6.mvc.fpt_cinema.security.SecurityUtils;
 import com.group6.mvc.fpt_cinema.service.ReviewService;
 
 
@@ -39,7 +40,7 @@ public class ReviewController {
         @AuthenticationPrincipal Jwt jwt
     ){
 
-        Integer userId = Integer.valueOf(jwt.getClaimAsString("userId"));
+        Integer userId = SecurityUtils.getUserId(jwt);
         ReviewResponse response = reviewService.createReview(request, userId);
         return ApiResponse.<ReviewResponse>builder()
                 .message("Review submitted successfully")
@@ -64,7 +65,7 @@ public class ReviewController {
         @RequestBody EditReviewRequest request,
         @AuthenticationPrincipal Jwt jwt
     ){
-        Integer userId = Integer.valueOf(jwt.getClaimAsString("userId"));
+        Integer userId = SecurityUtils.getUserId(jwt);
         ReviewResponse response = reviewService.editReview(reviewId, request, userId);
         return ApiResponse.<ReviewResponse>builder()
         .message("Review updated successfully")
