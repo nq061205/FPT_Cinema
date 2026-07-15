@@ -50,7 +50,7 @@ public class GeminiChatClient {
     public GeminiChatClient(
             ObjectMapper objectMapper,
             @Value("${gemini.api.key:}") String apiKey,
-            @Value("${gemini.api.model:gemini-3.5-flash}") String model,
+            @Value("${gemini.api.model:gemini-3-flash-preview}") String model,
             @Value("${gemini.api.base-url:" + DEFAULT_API_BASE_URL + "}") String apiBaseUrl,
             @Value("${gemini.api.structured-output:false}") boolean structuredOutputEnabled) {
         this(RestClient.create(), objectMapper, apiKey, model, apiBaseUrl, structuredOutputEnabled);
