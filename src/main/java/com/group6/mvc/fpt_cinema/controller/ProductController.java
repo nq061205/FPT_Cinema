@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.dto.request.CreateProductRequest;
@@ -51,6 +52,7 @@ public class ProductController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('PRODUCT_CREATE')")
     public ApiResponse<CreateProductResponse> createProduct(
             @RequestBody CreateProductRequest request) {
 
@@ -61,6 +63,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('PRODUCT_UPDATE')")
     public ApiResponse<UpdateProductResponse> updateProduct(
             @PathVariable Integer id,
             @RequestBody UpdateProductRequest request) {

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.dto.report.request.BookingReportRequest;
@@ -22,6 +23,7 @@ import com.group6.mvc.fpt_cinema.service.ReportService;
 
 @RestController
 @RequestMapping("/api/reports")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('REPORT_VIEW')")
 public class ReportController {
 
     private final ReportService reportService;

@@ -18,11 +18,12 @@ import com.group6.mvc.fpt_cinema.entity.Ai_Message;
 import com.group6.mvc.fpt_cinema.entity.User;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
 import com.group6.mvc.fpt_cinema.exception.AppException;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatClient;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatContext;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatRequest;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatResponse;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nMovieContext;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatClient;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatContext;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatHistoryMessage;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatRequest;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatResponse;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiMovieContext;
 import com.group6.mvc.fpt_cinema.repository.AiConversationRepository;
 import com.group6.mvc.fpt_cinema.repository.AiMessageRepository;
 import com.group6.mvc.fpt_cinema.repository.MovieRepository;
@@ -34,6 +35,7 @@ public class ChatServiceImpl implements ChatService {
 
     private static final int MAX_MESSAGE_LENGTH = 2000;
     private static final int MAX_CONTEXT_MOVIES = 50;
+    private static final int MAX_HISTORY_MESSAGES = 20;
     private static final Set<String> SUPPORTED_INTENTS = Set.of(
             "MOVIE_LIST",
             "SHOWTIME_LIST",
@@ -47,19 +49,19 @@ public class ChatServiceImpl implements ChatService {
     private final AiMessageRepository messageRepository;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
-    private final N8nChatClient n8nChatClient;
+    private final GeminiChatClient geminiChatClient;
 
     public ChatServiceImpl(
             AiConversationRepository conversationRepository,
             AiMessageRepository messageRepository,
             UserRepository userRepository,
             MovieRepository movieRepository,
-            N8nChatClient n8nChatClient) {
+            GeminiChatClient geminiChatClient) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.movieRepository = movieRepository;
-        this.n8nChatClient = n8nChatClient;
+        this.geminiChatClient = geminiChatClient;
     }
 
     @Override
@@ -89,20 +91,20 @@ public class ChatServiceImpl implements ChatService {
             throw new AppException(ErrorCode.CHAT_CONVERSATION_CLOSED);
         }
 
+        List<GeminiChatHistoryMessage> history = buildHistory(conversationId);
+
         saveMessage(conversation, "USER", normalizedMessage, null);
 
-        N8nChatResponse n8nResponse = n8nChatClient.sendMessage(new N8nChatRequest(
-                conversationId,
-                userId,
+        GeminiChatResponse geminiResponse = geminiChatClient.sendMessage(new GeminiChatRequest(
                 normalizedMessage,
-                buildChatContext()));
+                buildChatContext(history)));
 
-        String intent = normalizeIntent(n8nResponse.intent());
-        saveMessage(conversation, "BOT", n8nResponse.answer().trim(), intent);
+        String intent = normalizeIntent(geminiResponse.intent());
+        saveMessage(conversation, "BOT", geminiResponse.answer().trim(), intent);
 
         return ChatReplyResponse.builder()
                 .conversationId(conversationId)
-                .answer(n8nResponse.answer().trim())
+                .answer(geminiResponse.answer().trim())
                 .intent(intent)
                 .build();
     }
@@ -172,18 +174,43 @@ public class ChatServiceImpl implements ChatService {
         }
 
         String normalizedIntent = intent.trim().toUpperCase(Locale.ROOT);
-        return SUPPORTED_INTENTS.contains(normalizedIntent)
-                ? normalizedIntent
+        String canonicalIntent = switch (normalizedIntent) {
+            case "GET_NOW_SHOWING_MOVIES", "NOW_SHOWING_MOVIES", "LIST_MOVIES", "GET_MOVIES" -> "MOVIE_LIST";
+            case "GET_SHOWTIMES", "LIST_SHOWTIMES", "GET_SHOWTIME_LIST" -> "SHOWTIME_LIST";
+            case "GET_PROMOTIONS", "LIST_PROMOTIONS", "GET_PROMOTION_LIST" -> "PROMOTION_LIST";
+            case "GET_PRODUCTS", "LIST_PRODUCTS", "GET_PRODUCT_LIST" -> "PRODUCT_LIST";
+            case "LOOKUP_BOOKING", "GET_BOOKING", "BOOKING_STATUS" -> "BOOKING_LOOKUP";
+            case "LOOKUP_TICKET", "GET_TICKET", "TICKET_STATUS" -> "TICKET_LOOKUP";
+            default -> normalizedIntent;
+        };
+
+        return SUPPORTED_INTENTS.contains(canonicalIntent)
+                ? canonicalIntent
                 : "GENERAL_CHAT";
     }
 
-    private N8nChatContext buildChatContext() {
-        List<N8nMovieContext> movies = movieRepository.findAll(PageRequest.of(
+    private List<GeminiChatHistoryMessage> buildHistory(Integer conversationId) {
+        List<Ai_Message> messages = messageRepository
+                .findAllByConversationIdOrderByCreatedAtAscIdAsc(conversationId);
+
+        int fromIndex = Math.max(0, messages.size() - MAX_HISTORY_MESSAGES);
+        return messages.subList(fromIndex, messages.size())
+                .stream()
+                .map(message -> new GeminiChatHistoryMessage(
+                        "BOT".equalsIgnoreCase(message.getSender())
+                                ? "assistant"
+                                : "user",
+                        message.getContent()))
+                .toList();
+    }
+
+    private GeminiChatContext buildChatContext(List<GeminiChatHistoryMessage> history) {
+        List<GeminiMovieContext> movies = movieRepository.findAll(PageRequest.of(
                 0,
                 MAX_CONTEXT_MOVIES,
                 Sort.by(Sort.Direction.DESC, "id")))
                 .stream()
-                .map(movie -> new N8nMovieContext(
+                .map(movie -> new GeminiMovieContext(
                         movie.getId(),
                         movie.getTitle(),
                         movie.getGenre(),
@@ -194,7 +221,7 @@ public class ChatServiceImpl implements ChatService {
                         movie.getStatus()))
                 .toList();
 
-        return new N8nChatContext(movies);
+        return new GeminiChatContext(movies, history);
     }
 
     private ChatConversationResponse toConversationResponse(

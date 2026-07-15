@@ -1,0 +1,84 @@
+@startuml Promotion_Loyalty
+title Class Diagram - Promotion & Loyalty
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+' ===== Tang Controller =====
+class PromotionController {
+    - promotionService : PromotionService
+    --
+    + applyVoucher(bookingId, code)
+    + manageCampaign(request)
+    + listPromotions()
+}
+
+' ===== Tang Service =====
+interface PromotionService <<interface>> {
+    + applyPromotion(bookingId, code)
+    + validateVoucher(code)
+    + createCampaign(promotion)
+}
+
+class PromotionServiceImpl {
+    - promotionRepository : PromotionRepository
+    - voucherRepository : VoucherRepository
+    --
+    + applyPromotion(bookingId, code)
+    + validateVoucher(code)
+    + createCampaign(promotion)
+}
+
+' ===== Tang Repository =====
+interface PromotionRepository <<interface>> {
+    + findByCode(code)
+    + findActive()
+}
+
+interface VoucherRepository <<interface>> {
+    + findByCode(code)
+    + incrementUsedCount(id)
+}
+
+' ===== Tang Entity =====
+class Promotion {
+    + PromotionID : int
+    + Name : String
+    + DiscountType : String
+    + StartDate : DateTime
+    + EndDate : DateTime
+    + Status : String
+}
+
+class Voucher {
+    + VoucherID : int
+    + Code : String
+    + DiscountValue : decimal
+    + UsageLimit : int
+    + UsedCount : int
+    + ValidFrom : DateTime
+    + ValidTo : DateTime
+    + Status : String
+}
+
+' ===== Class muon tu context khac =====
+class Booking <<(B,#DDDDDD) borrowed>> {
+}
+
+' ===== Quan he kien truc =====
+PromotionController ..> PromotionService
+PromotionServiceImpl ..|> PromotionService
+PromotionServiceImpl ..> PromotionRepository
+PromotionServiceImpl ..> VoucherRepository
+PromotionRepository ..> Promotion
+VoucherRepository ..> Voucher
+
+' ===== Quan he nghiep vu (theo ERD) =====
+Promotion "1" -- "*" Voucher : issues
+Promotion "1" -- "*" Booking : applied to
+
+@enduml
