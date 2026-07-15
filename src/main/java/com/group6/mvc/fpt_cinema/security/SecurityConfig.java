@@ -124,13 +124,15 @@ public class SecurityConfig {
     JwtDecoder jwtDecoder(
             SecretKey jwtSecretKey,
             @Value("${security.jwt.issuer}") String issuer,
-            RevokedTokenValidator revokedTokenValidator) {
+            RevokedTokenValidator revokedTokenValidator,
+            SessionValidityValidator sessionValidityValidator) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSecretKey)
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
         decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 JwtValidators.createDefaultWithIssuer(issuer),
-                revokedTokenValidator));
+                revokedTokenValidator,
+                sessionValidityValidator));
         return decoder;
     }
 
