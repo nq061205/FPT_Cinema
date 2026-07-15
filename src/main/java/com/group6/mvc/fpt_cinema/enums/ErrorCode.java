@@ -32,6 +32,7 @@ public enum ErrorCode {
     CHAT_CONVERSATION_CLOSED(3002, "Conversation is closed", HttpStatus.CONFLICT),
     INVALID_CHAT_MESSAGE(3003, "Chat message is invalid", HttpStatus.BAD_REQUEST),
     CHAT_SERVICE_UNAVAILABLE(3004, "Chat service is unavailable", HttpStatus.BAD_GATEWAY),
+    CHAT_SERVICE_RATE_LIMITED(3005, "Chat service quota or rate limit has been reached. Please try again later.", HttpStatus.TOO_MANY_REQUESTS),
 
     INVALID_RATING(3101, "Invalid rating", HttpStatus.BAD_REQUEST),
     BOOKING_NOT_FOUND(3102, "Booking is not found", HttpStatus.NOT_FOUND),

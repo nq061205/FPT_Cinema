@@ -57,7 +57,7 @@ public class PaymentController {
         }
 
         // Chỉ STAFF mới tạo được payment tiền mặt cho khách tại quầy
-        @PreAuthorize("hasRole('STAFF')")
+        @PreAuthorize("hasAnyRole('ADMIN', 'STAFF') or hasAuthority('PAYMENT_CASH')")
         @PostMapping("/cash")
         public ApiResponse<CreatePaymentResponse> createCashPayment(
                         @RequestBody CreateCashPaymentRequest request) {
@@ -69,7 +69,7 @@ public class PaymentController {
         }
 
         // Chỉ nhân viên quầy vé (STAFF) mới được xác nhận thu tiền mặt
-        @PreAuthorize("hasRole('STAFF')")
+        @PreAuthorize("hasAnyRole('ADMIN', 'STAFF') or hasAuthority('PAYMENT_CASH')")
         @PostMapping("/cash/confirm")
         public ApiResponse<PaymentResponse> confirmCashPayment(
                         @RequestBody ConfirmCashPaymentRequest request) {
