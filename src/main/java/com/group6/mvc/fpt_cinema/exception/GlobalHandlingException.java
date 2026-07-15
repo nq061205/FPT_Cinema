@@ -1,6 +1,7 @@
 package com.group6.mvc.fpt_cinema.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+
+import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalHandlingException {
@@ -56,6 +59,28 @@ public class GlobalHandlingException {
         } catch (IllegalArgumentException ignored) {
             return ErrorCode.INVALID_INPUT;
         }
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    ResponseEntity<ApiResponse<Void>> handlingConstraintViolationException(ConstraintViolationException exception) {
+        ErrorCode errorCode = ErrorCode.INVALID_INPUT;
+        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(apiResponse);
+    }
+
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    ResponseEntity<ApiResponse<Void>> handlingHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        ErrorCode errorCode = ErrorCode.INVALID_INPUT;
+        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(apiResponse);
     }
 
     @ExceptionHandler(value = Exception.class)

@@ -11,12 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ViewSeatResponse {
-    private Integer id;
-    private String seatRow;
-    private Integer seatNumber;
-    private String seatType;
-    private String status;
-    private String bookingStatus;
-    private BigDecimal price;
+public class ProcessPaymentProductResponse {
+    private String productName;
+    private Integer quantity;
+    private BigDecimal unitPrice;
+    private BigDecimal totalPrice;
 }

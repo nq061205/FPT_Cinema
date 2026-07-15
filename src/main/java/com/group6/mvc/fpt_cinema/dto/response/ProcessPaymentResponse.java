@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.group6.mvc.fpt_cinema.enums.BookingStatus;
+import com.group6.mvc.fpt_cinema.enums.PaymentMethod;
+import com.group6.mvc.fpt_cinema.enums.PaymentStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,16 +16,24 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateBookingResponse {
-    private Integer id;
+public class ProcessPaymentResponse {
+    private String paymentCode;
     private String bookingCode;
+    private BigDecimal amount;
+    private PaymentMethod method;
+    private PaymentStatus status;
+    private LocalDateTime paidAt;
+
+    // Detailed Invoice/Receipt Fields
     private String movieTitle;
     private String roomName;
     private LocalDateTime startTime;
     private BigDecimal subtotal;
     private BigDecimal discountAmount;
     private BigDecimal finalAmount;
-    private BookingStatus status;
-    private LocalDateTime expiresAt;
+    private String promotionCode;
+    private String promotionName;
+
     private List<CreateBookingTicketResponse> tickets;
+    private List<ProcessPaymentProductResponse> products;
 }

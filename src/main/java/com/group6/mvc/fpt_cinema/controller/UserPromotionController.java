@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.group6.mvc.fpt_cinema.apiresponse.ApiResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewUserPromotionListResponse;
+import com.group6.mvc.fpt_cinema.security.SecurityUtils;
 import com.group6.mvc.fpt_cinema.service.UserPromotionService;
 
 @RestController
@@ -29,9 +30,7 @@ public class UserPromotionController {
             viewMyPromotions(
                     @AuthenticationPrincipal Jwt jwt) {
 
-        Integer userId =
-                Integer.valueOf(
-                        jwt.getClaim("userId").toString());
+        Integer userId = SecurityUtils.getUserId(jwt);
 
         Pageable pageable =
                 PageRequest.of(0, 20);

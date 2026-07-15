@@ -12,6 +12,10 @@ import com.group6.mvc.fpt_cinema.enums.PaymentStatus;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
+    Optional<Payment> findFirstByBookingIdOrderByIdDesc(Integer bookingId);
+
+    List<Payment> findByRefundRequestedTrueAndStatusNotOrderByRefundRequestedAtAsc(PaymentStatus status);
+
     Optional<Payment> findByPaymentCode(String paymentCode);
 
     boolean existsByBookingIdAndStatus(Integer bookingId, PaymentStatus status);

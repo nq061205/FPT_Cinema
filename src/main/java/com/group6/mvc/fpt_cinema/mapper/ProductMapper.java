@@ -17,6 +17,7 @@ public class ProductMapper {
         response.setId(product.getId());
         response.setName(product.getName());
         response.setProductType(product.getProductType());
+        response.setImageUrl(product.getImageUrl());
         response.setPrice(product.getPrice());
         response.setIsActive(product.getIsActive());
         return response;
@@ -27,6 +28,7 @@ public class ProductMapper {
         response.setId(product.getId());
         response.setName(product.getName());
         response.setProductType(product.getProductType());
+        response.setImageUrl(product.getImageUrl());
         response.setPrice(product.getPrice());
         response.setIsActive(product.getIsActive());
         response.setCreatedAt(product.getCreatedAt());
@@ -38,6 +40,7 @@ public class ProductMapper {
         Product product = new Product();
         product.setName(request.getName());
         product.setProductType(request.getProductType().toUpperCase().trim());
+        product.setImageUrl(request.getImageUrl());
         product.setPrice(request.getPrice());
         product.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
         return product;
@@ -48,6 +51,7 @@ public class ProductMapper {
         response.setId(product.getId());
         response.setName(product.getName());
         response.setProductType(product.getProductType());
+        response.setImageUrl(product.getImageUrl());
         response.setPrice(product.getPrice());
         response.setIsActive(product.getIsActive());
         response.setCreatedAt(product.getCreatedAt());
@@ -59,6 +63,7 @@ public class ProductMapper {
         response.setId(product.getId());
         response.setName(product.getName());
         response.setProductType(product.getProductType());
+        response.setImageUrl(product.getImageUrl());
         response.setPrice(product.getPrice());
         response.setIsActive(product.getIsActive());
         response.setUpdatedAt(product.getUpdatedAt());

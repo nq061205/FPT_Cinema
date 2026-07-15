@@ -1,7 +1,6 @@
 package com.group6.mvc.fpt_cinema.dto.request;
 
-import java.math.BigDecimal;
-
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateProductRequest {
-    private String name;
-    private String productType;
-    private String imageUrl;
-    private BigDecimal price;
-    private Boolean isActive;
+public class CheckInTicketRequest {
+    @NotBlank(message = "INVALID_INPUT")
+    private String ticketCode;
 }

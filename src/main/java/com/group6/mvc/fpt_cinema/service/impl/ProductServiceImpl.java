@@ -118,6 +118,10 @@ public class ProductServiceImpl
             product.setProductType(type);
         }
 
+        if (request.getImageUrl() != null) {
+            product.setImageUrl(request.getImageUrl());
+        }
+
         if (request.getPrice() != null) {
             if (request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new AppException(ErrorCode.INVALID_PRICE);

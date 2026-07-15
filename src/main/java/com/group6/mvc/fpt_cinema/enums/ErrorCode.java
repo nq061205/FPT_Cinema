@@ -32,7 +32,8 @@ public enum ErrorCode {
     CHAT_CONVERSATION_CLOSED(3002, "Conversation is closed", HttpStatus.CONFLICT),
     INVALID_CHAT_MESSAGE(3003, "Chat message is invalid", HttpStatus.BAD_REQUEST),
     CHAT_SERVICE_UNAVAILABLE(3004, "Chat service is unavailable", HttpStatus.BAD_GATEWAY),
-    CHAT_SERVICE_RATE_LIMITED(3005, "Chat service quota or rate limit has been reached. Please try again later.", HttpStatus.TOO_MANY_REQUESTS),
+    CHAT_SERVICE_RATE_LIMITED(3005, "Chat service quota or rate limit has been reached. Please try again later.",
+            HttpStatus.TOO_MANY_REQUESTS),
 
     INVALID_RATING(3101, "Invalid rating", HttpStatus.BAD_REQUEST),
     BOOKING_NOT_FOUND(3102, "Booking is not found", HttpStatus.NOT_FOUND),
@@ -97,10 +98,26 @@ public enum ErrorCode {
     SEAT_ALREADY_BOOKED(9003, "One or more seats are already booked", HttpStatus.CONFLICT),
     SEAT_NOT_IN_SHOWTIME_ROOM(9004, "One or more seats do not belong to the showtime's room", HttpStatus.BAD_REQUEST),
 
-    PAYMENT_NOT_FOUND(10001, "Payment not found", HttpStatus.NOT_FOUND),
+    BOOKING_ALREADY_PAID(9101, "Booking has already been paid", HttpStatus.BAD_REQUEST),
+    BOOKING_EXPIRED(9102, "Booking has expired", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_PENDING(9103, "Booking is not in PENDING status", HttpStatus.BAD_REQUEST),
+    INVALID_PAYMENT_METHOD(9104, "Invalid payment method. Must be CASH or VNPAY", HttpStatus.BAD_REQUEST),
+
+    PAYMENT_NOT_FOUND(9201, "Payment not found for this booking", HttpStatus.NOT_FOUND),
+    REFUND_ALREADY_REQUESTED(9202, "Refund has already been requested for this booking", HttpStatus.BAD_REQUEST),
+    REFUND_ALREADY_COMPLETED(9203, "Refund has already been completed for this booking", HttpStatus.BAD_REQUEST),
+    REFUND_NOT_REQUESTED(9204, "No refund request found for this booking", HttpStatus.BAD_REQUEST),
+    INVALID_REFUND_METHOD(9205, "Invalid refund method. Must be ONLINE or CASH", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_COMPLETED(9207, "Refund is only available after the booking is COMPLETED (all tickets checked in)",
+            HttpStatus.BAD_REQUEST),
+
+    TICKET_NOT_FOUND(6101, "Ticket not found", HttpStatus.NOT_FOUND),
+    TICKET_ALREADY_USED(6102, "Ticket has already been used", HttpStatus.BAD_REQUEST),
+    TICKET_INVALID_STATUS(6103, "Ticket status is invalid for check-in. Must be BOOKED", HttpStatus.BAD_REQUEST),
+    TICKET_BOOKING_NOT_CONFIRMED(6104, "Booking associated with this ticket is not confirmed", HttpStatus.BAD_REQUEST),
+
     BOOKING_NOT_PAYABLE(10002, "Booking is not in a payable state", HttpStatus.BAD_REQUEST),
     PAYMENT_ALREADY_COMPLETED(10003, "Booking has already been paid", HttpStatus.CONFLICT),
-    INVALID_PAYMENT_METHOD(10004, "Invalid or unsupported payment method", HttpStatus.BAD_REQUEST),
     PAYMENT_AMOUNT_MISMATCH(10005, "Payment amount does not match booking amount", HttpStatus.BAD_REQUEST),
     INVALID_PAYMENT_SIGNATURE(10006, "Invalid payment signature", HttpStatus.BAD_REQUEST),
     PAYMENT_METHOD_MISMATCH(10007, "Payment method does not match the requested action", HttpStatus.BAD_REQUEST),
