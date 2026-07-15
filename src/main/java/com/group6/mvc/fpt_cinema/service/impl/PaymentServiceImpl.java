@@ -109,7 +109,7 @@ public class PaymentServiceImpl
         if (booking.getStatus() != BookingStatus.PENDING) {
             throw new AppException(ErrorCode.BOOKING_NOT_PAYABLE);
         }
-        if (paymentRepository.existsByBookingIdAndStatus(booking.getId(), PaymentStatus.PAID)) {
+        if (paymentRepository.existsByBookingIdAndStatus(booking.getId(), PaymentStatus.COMPLETED)) {
             throw new AppException(ErrorCode.PAYMENT_ALREADY_COMPLETED);
         }
 
@@ -174,7 +174,7 @@ public class PaymentServiceImpl
         if (booking.getStatus() != BookingStatus.PENDING) {
             throw new AppException(ErrorCode.BOOKING_NOT_PAYABLE);
         }
-        if (paymentRepository.existsByBookingIdAndStatus(booking.getId(), PaymentStatus.PAID)) {
+        if (paymentRepository.existsByBookingIdAndStatus(booking.getId(), PaymentStatus.COMPLETED)) {
             throw new AppException(ErrorCode.PAYMENT_ALREADY_COMPLETED);
         }
 
@@ -214,7 +214,7 @@ public class PaymentServiceImpl
             throw new AppException(ErrorCode.PAYMENT_NOT_PENDING);
         }
 
-        payment.setStatus(PaymentStatus.PAID);
+        payment.setStatus(PaymentStatus.COMPLETED);
         payment.setPaidAt(LocalDateTime.now());
         paymentRepository.save(payment);
 
@@ -239,7 +239,7 @@ public class PaymentServiceImpl
         Payment payment = paymentRepository.findByPaymentCode(vnpParams.get("vnp_TxnRef"))
                 .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
 
-        if (payment.getStatus() == PaymentStatus.PAID) {
+        if (payment.getStatus() == PaymentStatus.COMPLETED) {
             return paymentMapper.toVnpayReturnResponse(payment, "00", "Payment already confirmed");
         }
         if (payment.getMethod() != PaymentMethod.VNPAY) {
@@ -253,7 +253,7 @@ public class PaymentServiceImpl
         boolean success = "00".equals(responseCode) && "00".equals(vnpParams.get("vnp_TransactionStatus"));
 
         if (success && amountMatches) {
-            payment.setStatus(PaymentStatus.PAID);
+            payment.setStatus(PaymentStatus.COMPLETED);
             payment.setPaidAt(LocalDateTime.now());
             paymentRepository.save(payment);
 
