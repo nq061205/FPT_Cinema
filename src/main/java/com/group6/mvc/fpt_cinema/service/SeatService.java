@@ -25,6 +25,10 @@ public interface SeatService extends CrudService<Seat, Integer> {
 
     List<SeatResponse> batchUpdateSeats(Integer roomId, BatchUpdateSeatRequest request);
 
+    void deleteSeat(Integer roomId, Integer seatId);
+
+    void batchDeleteSeats(Integer roomId, List<Integer> seatIds);
+
         ViewSeatMapResponse viewSeatMap(
                         ViewSeatMapRequest request);
 

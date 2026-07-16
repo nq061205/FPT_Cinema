@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.group6.mvc.fpt_cinema.enums.PaymentMethod;
 import com.group6.mvc.fpt_cinema.enums.PaymentStatus;
+import com.group6.mvc.fpt_cinema.enums.RefundMethod;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,6 +57,28 @@ public class Payment {
 
     @Column(name = "refund_amount", nullable = false, precision = 14, scale = 2)
     private BigDecimal refundAmount = BigDecimal.ZERO;
+
+    @Column(name = "refund_requested", nullable = false)
+    private Boolean refundRequested = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "refund_method", length = 20)
+    private RefundMethod refundMethod;
+
+    @Column(name = "refund_requested_at")
+    private LocalDateTime refundRequestedAt;
+
+    @Column(name = "refunded_at")
+    private LocalDateTime refundedAt;
+
+    @Column(name = "refund_rejected_at")
+    private LocalDateTime refundRejectedAt;
+
+    @Column(name = "refund_rejection_reason", length = 255)
+    private String refundRejectionReason;
+
+    @Column(name = "refund_voucher_code", length = 80)
+    private String refundVoucherCode;
 
     @Column(name = "paid_at")
     private LocalDateTime paidAt;

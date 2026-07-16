@@ -17,6 +17,7 @@ import com.group6.mvc.fpt_cinema.repository.TicketRepository;
 import com.group6.mvc.fpt_cinema.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,36 +58,16 @@ public class ReviewServiceImpl
             throw new AppException(ErrorCode.INVALID_RATING);
         }
 
-        // tim booking theo id
-        Booking booking = bookingRepository.findByIdAndCustomerId(request.getBookingId(), userId)
-                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+        Booking booking = bookingRepository
+        .findCompletedBooking(userId, request.getMovieId(), LocalDateTime.now(), PageRequest.of(0, 1))
+        .stream()
+        .findFirst()
+        .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
 
-         if(!"CONFIRMED".equals(booking.getStatus())){
-             throw new AppException(ErrorCode.BOOKING_NOT_CONFIRMED);
-         }
+        if (reviewRepository.existsByCustomerIdAndMovieId(userId, request.getMovieId())) {
+            throw new AppException(ErrorCode.ALREADY_REVIEW);
+        }
 
-         if(!ticketRepository.existsByBookingIdAndStatus(booking.getId(), "USED")){
-             throw new AppException(ErrorCode.TICKET_NOT_USED);
-         }
-
-         if(booking.getShowtime().getStartTime().isAfter(LocalDateTime.now())){
-
-            throw new AppException(ErrorCode.SHOWTIME_NOT_PASSED);
-         }
-
-         if(!booking.getShowtime().getMovie().getId().equals(request.getMovieId())){
-             throw new AppException(ErrorCode.MOVIE_MISMATCH);
-         }
-
-         if(reviewRepository.existsByCustomerIdAndBookingId(userId, request.getBookingId())){
-             throw new AppException(ErrorCode.ALREADY_REVIEW);
-         }
-
-         int reviewCount = reviewRepository.countByCustomerIdAndMovieId(userId, request.getMovieId());
-
-         if(reviewCount >= 2){
-             throw new AppException(ErrorCode.REVIEW_LIMIT_ACCESS);
-         }
 
         Movie movie = movieRepository.findById(request.getMovieId())
                 .orElseThrow(()-> new AppException(ErrorCode.MOVIE_NOT_FOUND));
@@ -131,6 +112,23 @@ public class ReviewServiceImpl
 
         Review saved = reviewRepository.save(review);
         return IReviewMapper.toResponse(saved);
+    }
+
+
+    @Override
+    public Page<ReviewResponse> getAllReviews(Integer movieId, Integer rating, Pageable pageable) {
+        return reviewRepository.findByMovieIdAndRating(movieId,rating,pageable)
+                .map(IReviewMapper::toResponse);
+    }
+    @Override
+    @Transactional
+    public void deleteReview(Integer reviewId) {
+    
+        if (!reviewRepository.existsById(reviewId)) {
+            throw new AppException(ErrorCode.REVIEW_NOT_FOUND);
+        }
+        
+        reviewRepository.deleteById(reviewId);
     }
 
 }

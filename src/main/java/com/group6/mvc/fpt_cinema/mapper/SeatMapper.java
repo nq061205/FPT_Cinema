@@ -9,6 +9,7 @@ import com.group6.mvc.fpt_cinema.entity.Seat;
 public class SeatMapper {
         public ViewSeatResponse toViewSeatResponse(Seat seat) {
                 ViewSeatResponse response = new ViewSeatResponse();
+                response.setId(seat.getId());
                 response.setSeatNumber(seat.getSeatNumber());
                 response.setSeatRow(seat.getSeatRow());
                 response.setSeatType(seat.getSeatType());
@@ -22,6 +23,8 @@ public class SeatMapper {
                         boolean isSelected) {
 
                 ViewSeatResponse response = new ViewSeatResponse();
+
+                response.setId(seat.getId());
 
                 response.setSeatNumber(
                                 seat.getSeatNumber());

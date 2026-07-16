@@ -56,7 +56,8 @@ CREATE TABLE `users` (
   `membership_level` VARCHAR(20) NOT NULL DEFAULT 'BRONZE'
       CHECK (`membership_level` IN ('BRONZE','SILVER','GOLD','DIAMOND')),
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `tokens_valid_from` DATETIME(6) NULL
 );
 
 CREATE TABLE `revoked_tokens` (
@@ -111,6 +112,7 @@ CREATE TABLE `showtimes` (
   `room_id` INT NOT NULL,
   `start_time` DATETIME NOT NULL,
   `base_price` DECIMAL(12,2) NOT NULL,
+  `cleaning_buffer_minutes` INT NOT NULL DEFAULT 15,
   `status` VARCHAR(20) NOT NULL DEFAULT 'OPEN'
       CHECK (`status` IN ('OPEN','SOLD_OUT','CANCELLED','FINISHED')),
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -150,7 +152,7 @@ CREATE TABLE `bookings` (
   `channel` VARCHAR(20) NOT NULL
       CHECK (`channel` IN ('ONLINE','COUNTER')),
   `status` VARCHAR(20) NOT NULL DEFAULT 'PENDING'
-      CHECK (`status` IN ('PENDING','CONFIRMED','CANCELLED','EXPIRED','REFUNDED')),
+      CHECK (`status` IN ('PENDING','CONFIRMED','CANCELLED','COMPLETED','EXPIRED','REFUNDED')),
   `subtotal` DECIMAL(14,2) NOT NULL DEFAULT 0,
   `discount_amount` DECIMAL(14,2) NOT NULL DEFAULT 0,
   `final_amount` DECIMAL(14,2) NOT NULL,
@@ -188,7 +190,7 @@ CREATE TABLE `payments` (
   `method` VARCHAR(20) NOT NULL
       CHECK (`method` IN ('CASH','VNPAY','E_WALLET','BANK_TRANSFER')),
   `status` VARCHAR(20) NOT NULL DEFAULT 'PENDING'
-      CHECK (`status` IN ('PENDING','PAID','FAILED','REFUNDED')),
+      CHECK (`status` IN ('PENDING','COMPLETED','FAILED','REFUNDED')),
   `amount` DECIMAL(14,2) NOT NULL,
   `refund_amount` DECIMAL(14,2) NOT NULL DEFAULT 0,
   `paid_at` DATETIME,

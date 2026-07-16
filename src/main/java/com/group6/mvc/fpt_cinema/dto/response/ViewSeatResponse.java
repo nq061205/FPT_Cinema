@@ -1,4 +1,7 @@
 package com.group6.mvc.fpt_cinema.dto.response;
+
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,10 +11,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-    public class ViewSeatResponse {
+public class ViewSeatResponse {
+    private Integer id;
     private String seatRow;
     private Integer seatNumber;
     private String seatType;
     private String status;
     private String bookingStatus;
+    private BigDecimal price;
 }

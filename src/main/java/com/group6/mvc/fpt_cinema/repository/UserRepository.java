@@ -1,5 +1,6 @@
 package com.group6.mvc.fpt_cinema.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +40,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             where u.id = :id
             """)
     Optional<User> findByIdWithRole(@Param("id") Integer id);
+
+    @Query("select u.tokensValidFrom from User u where u.id = :id")
+    Optional<Instant> findTokensValidFromById(@Param("id") Integer id);
 }

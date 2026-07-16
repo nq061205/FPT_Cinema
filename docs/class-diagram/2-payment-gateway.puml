@@ -1,0 +1,74 @@
+@startuml Payment_Gateway
+title Class Diagram - Payment Gateway
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+' ===== Tang Controller =====
+class PaymentController {
+    - paymentService : PaymentService
+    --
+    + processPayment(bookingId, method)
+    + handleTimeout(paymentId)
+    + getPaymentStatus(paymentId)
+}
+
+' ===== Tang Service =====
+interface PaymentService <<interface>> {
+    + processPayment(bookingId, method)
+    + handlePaymentTimeout(paymentId)
+    + confirmPayment(paymentCode)
+}
+
+class PaymentServiceImpl {
+    - paymentRepository : PaymentRepository
+    - paymentGateway : PaymentGateway
+    --
+    + processPayment(bookingId, method)
+    + handlePaymentTimeout(paymentId)
+    + confirmPayment(paymentCode)
+}
+
+' ===== Tang Repository =====
+interface PaymentRepository <<interface>> {
+    + findByBooking(bookingId)
+    + findByStatus(status)
+}
+
+' ===== Cong thanh toan ben ngoai =====
+interface PaymentGateway <<interface>> {
+    + charge(amount)
+    + verify(transactionId)
+}
+
+' ===== Tang Entity =====
+class Payment {
+    + PaymentID : int
+    + Method : String
+    + Amount : decimal
+    + Status : String
+}
+
+' ===== Class muon tu context khac =====
+class Booking <<(B,#DDDDDD) borrowed>> {
+}
+
+class Order <<(B,#DDDDDD) borrowed>> {
+}
+
+' ===== Quan he kien truc =====
+PaymentController ..> PaymentService
+PaymentServiceImpl ..|> PaymentService
+PaymentServiceImpl ..> PaymentRepository
+PaymentServiceImpl ..> PaymentGateway
+PaymentRepository ..> Payment
+
+' ===== Quan he nghiep vu (theo ERD) =====
+Booking "1" -- "0..1" Payment : paid by
+Order "1" -- "*" Payment : paid by
+
+@enduml

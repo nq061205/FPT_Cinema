@@ -1,5 +1,6 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -8,9 +9,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.group6.mvc.fpt_cinema.dto.request.CreateProductRequest;
+import com.group6.mvc.fpt_cinema.dto.request.UpdateProductRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ViewProductDetailRequest;
 import com.group6.mvc.fpt_cinema.dto.request.ViewProductListRequest;
+import com.group6.mvc.fpt_cinema.dto.response.CreateProductResponse;
+import com.group6.mvc.fpt_cinema.dto.response.UpdateProductResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewProductDetailResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewProductListResponse;
 import com.group6.mvc.fpt_cinema.entity.Product;
@@ -69,4 +75,64 @@ public class ProductServiceImpl
         return productMapper.toViewProductDetailResponse(product);
     }
 
+    @Override
+    @Transactional
+    public CreateProductResponse createProduct(CreateProductRequest request) {
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new AppException(ErrorCode.INVALID_INPUT);
+        }
+
+        String type = request.getProductType() != null
+                ? request.getProductType().toUpperCase().trim()
+                : null;
+        if (type == null || !VALID_TYPES.contains(type)) {
+            throw new AppException(ErrorCode.INVALID_PRODUCT_TYPE);
+        }
+
+        if (request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AppException(ErrorCode.INVALID_PRICE);
+        }
+
+        Product product = productMapper.toProduct(request);
+        return productMapper.toCreateProductResponse(productRepository.save(product));
+    }
+
+    @Override
+    @Transactional
+    public UpdateProductResponse updateProduct(Integer productId, UpdateProductRequest request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        if (request.getName() != null) {
+            if (request.getName().isBlank()) {
+                throw new AppException(ErrorCode.INVALID_INPUT);
+            }
+            product.setName(request.getName());
+        }
+
+        if (request.getProductType() != null) {
+            String type = request.getProductType().toUpperCase().trim();
+            if (!VALID_TYPES.contains(type)) {
+                throw new AppException(ErrorCode.INVALID_PRODUCT_TYPE);
+            }
+            product.setProductType(type);
+        }
+
+        if (request.getImageUrl() != null) {
+            product.setImageUrl(request.getImageUrl());
+        }
+
+        if (request.getPrice() != null) {
+            if (request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new AppException(ErrorCode.INVALID_PRICE);
+            }
+            product.setPrice(request.getPrice());
+        }
+
+        if (request.getIsActive() != null) {
+            product.setIsActive(request.getIsActive());
+        }
+
+        return productMapper.toUpdateProductResponse(productRepository.save(product));
+    }
 }

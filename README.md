@@ -50,38 +50,27 @@ $bytes = New-Object byte[] 32
 $env:JWT_SECRET = [Convert]::ToBase64String($bytes)
 ```
 
-## n8n chatbot integration
+## Gemini chatbot integration
 
-Configure the published n8n webhook before starting the backend:
+Create an API key in Google AI Studio, then configure it as an environment variable before starting the backend:
 
 ```powershell
-$env:N8N_CHAT_WEBHOOK_URL="https://duyhoang.app.n8n.cloud/webhook/chat-api"
-$env:N8N_CHAT_WEBHOOK_SECRET="<your-new-webhook-secret>"
+$env:GEMINI_API_KEY="<your-gemini-api-key>"
 ```
 
-The n8n workflow must return:
+Optional model override (the default is `gemini-3.5-flash`):
 
-```json
-{
-  "answer": "Chatbot response",
-  "intent": "GENERAL_CHAT"
-}
+```powershell
+$env:GEMINI_API_MODEL="gemini-3.5-flash"
 ```
 
-The `Basic LLM Chain` prompt must use the movie context sent by the backend:
+The backend sends the conversation history and current movie data from the database to Gemini. The API key stays on the server and is never sent to the frontend.
 
-```text
-You are the FPT Cinema assistant.
-Answer in Vietnamese using only the supplied system data.
-For a movie-list question, include movies whose status is NOW_SHOWING.
-If the data does not contain the answer, say that the information is unavailable.
+## Initial catalog data
 
-User question:
-{{ $json.body.message }}
+The repeatable catalog seed is in [`docs/seed-initial-data.sql`](docs/seed-initial-data.sql). It fills the main room seat maps, adds combo products, assigns active promotions to customers, and creates a seven-day showtime slate for currently showing movies. It intentionally does not create fake bookings, tickets, payments, or reviews.
 
-Movie data:
-{{ JSON.stringify($json.body.context.movies) }}
-```
+Run it once against the configured MySQL database, then restart the backend so showtime end-status jobs are registered.
 
 Chat endpoints require a valid JWT:
 

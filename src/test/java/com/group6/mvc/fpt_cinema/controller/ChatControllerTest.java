@@ -31,9 +31,9 @@ import com.group6.mvc.fpt_cinema.entity.Role;
 import com.group6.mvc.fpt_cinema.entity.User;
 import com.group6.mvc.fpt_cinema.enums.MovieGenre;
 import com.group6.mvc.fpt_cinema.enums.MovieStatus;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatClient;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatRequest;
-import com.group6.mvc.fpt_cinema.integration.n8n.N8nChatResponse;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatClient;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatRequest;
+import com.group6.mvc.fpt_cinema.integration.gemini.GeminiChatResponse;
 import com.group6.mvc.fpt_cinema.repository.AiConversationRepository;
 import com.group6.mvc.fpt_cinema.repository.AiMessageRepository;
 import com.group6.mvc.fpt_cinema.repository.MovieRepository;
@@ -64,7 +64,7 @@ class ChatControllerTest {
         private MovieRepository movieRepository;
 
         @MockitoBean
-        private N8nChatClient n8nChatClient;
+        private GeminiChatClient geminiChatClient;
 
         private User user;
         private User anotherUser;
@@ -87,10 +87,10 @@ class ChatControllerTest {
                                 .andExpect(jsonPath("$.result.channel").value("WEB"));
 
                 Ai_Conversation conversation = conversationRepository.findAll().get(0);
-                when(n8nChatClient.sendMessage(any(N8nChatRequest.class)))
-                                .thenReturn(new N8nChatResponse(
+                when(geminiChatClient.sendMessage(any(GeminiChatRequest.class)))
+                                .thenReturn(new GeminiChatResponse(
                                                 "Hôm nay FPT Cinema có các phim đang chiếu.",
-                                                "MOVIE_LIST"));
+                                                "get_now_showing_movies"));
 
                 mockMvc.perform(post("/api/chat/conversations/{id}/messages",
                                 conversation.getId())
@@ -108,11 +108,8 @@ class ChatControllerTest {
                                                 .value("Hôm nay FPT Cinema có các phim đang chiếu."))
                                 .andExpect(jsonPath("$.result.intent").value("MOVIE_LIST"));
 
-                ArgumentCaptor<N8nChatRequest> requestCaptor = ArgumentCaptor.forClass(N8nChatRequest.class);
-                verify(n8nChatClient).sendMessage(requestCaptor.capture());
-                assertThat(requestCaptor.getValue().conversationId())
-                                .isEqualTo(conversation.getId());
-                assertThat(requestCaptor.getValue().userId()).isEqualTo(user.getId());
+                ArgumentCaptor<GeminiChatRequest> requestCaptor = ArgumentCaptor.forClass(GeminiChatRequest.class);
+                verify(geminiChatClient).sendMessage(requestCaptor.capture());
                 assertThat(requestCaptor.getValue().context().movies())
                                 .extracting(movieContext -> movieContext.title())
                                 .contains("Chat Test Movie");
@@ -178,7 +175,7 @@ class ChatControllerTest {
                                 .andExpect(status().isConflict())
                                 .andExpect(jsonPath("$.code").value(3002));
 
-                verify(n8nChatClient, never()).sendMessage(any());
+                verify(geminiChatClient, never()).sendMessage(any());
         }
 
         @Test
@@ -204,7 +201,7 @@ class ChatControllerTest {
                 movie.setGenre(MovieGenre.ACTION);
                 movie.setDurationMinutes(120);
                 movie.setAgeRating("T13");
-                movie.setDescription("Movie data supplied to n8n");
+                movie.setDescription("Movie data supplied to Gemini");
                 movie.setStatus(MovieStatus.NOW_SHOWING);
                 movieRepository.save(movie);
         }

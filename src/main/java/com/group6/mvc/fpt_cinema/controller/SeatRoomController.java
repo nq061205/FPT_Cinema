@@ -49,7 +49,7 @@ public class SeatRoomController {
     }
 
     @PostMapping("/generate")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SEAT_MANAGE')")
     public ApiResponse<List<SeatResponse>> generateSeats(
         @PathVariable Integer roomId,
         @RequestBody GenerateSeatRequest request
@@ -62,7 +62,7 @@ public class SeatRoomController {
 
 
     @PutMapping("/{seatId}")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SEAT_MANAGE')")
     public ApiResponse<SeatResponse> updateSeat(
         @PathVariable Integer roomId,
         @PathVariable Integer seatId,
@@ -76,7 +76,7 @@ public class SeatRoomController {
 
 
     @PatchMapping("/batch")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SEAT_MANAGE')")
     public ApiResponse<List<SeatResponse>> batchUpdateSeats(
         @PathVariable Integer roomId,
         @RequestBody BatchUpdateSeatRequest request
@@ -87,8 +87,27 @@ public class SeatRoomController {
         .build();
     }
 
+    @org.springframework.web.bind.annotation.DeleteMapping("/{seatId}")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ApiResponse<Void> deleteSeat(
+        @PathVariable Integer roomId,
+        @PathVariable Integer seatId
+    ){
+        seatService.deleteSeat(roomId, seatId);
+        return ApiResponse.<Void>builder()
+        .message("Seat deleted successfully")
+        .build();
+    }
 
-
-
-
+    @org.springframework.web.bind.annotation.DeleteMapping("/batch")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ApiResponse<Void> batchDeleteSeats(
+        @PathVariable Integer roomId,
+        @RequestBody java.util.Map<String, List<Integer>> request
+    ){
+        seatService.batchDeleteSeats(roomId, request.get("seatIds"));
+        return ApiResponse.<Void>builder()
+        .message("Seats deleted successfully")
+        .build();
+    }
 }

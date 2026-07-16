@@ -16,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateBookingResponse {
+    private Integer id;
     private String bookingCode;
     private String movieTitle;
     private String roomName;

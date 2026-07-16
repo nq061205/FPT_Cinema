@@ -1,5 +1,6 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -35,8 +36,9 @@ public class UserPromotionServiceImpl
             Integer userId,
             Pageable pageable) {
 
-        Page<User_Promotion> page = userPromotionRepository.findByUserId(
+        Page<User_Promotion> page = userPromotionRepository.findUsablePromotions(
                 userId,
+                LocalDateTime.now(),
                 pageable);
 
         List<ViewUserPromotionResponse> promotions = page.getContent()
