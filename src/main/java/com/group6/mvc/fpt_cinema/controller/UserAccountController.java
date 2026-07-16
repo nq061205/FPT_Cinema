@@ -65,6 +65,15 @@ public class UserAccountController {
                 .build();
     }
 
+    @GetMapping("/{id}/permissions")
+    @PreAuthorize("hasAuthority('USER_VIEW_DETAIL')")
+    public ApiResponse<List<UserPermissionResponse>> getUserPermissions(@PathVariable Integer id) {
+        return ApiResponse.<List<UserPermissionResponse>>builder()
+                .message("User permissions retrieved successfully")
+                .result(userPermissionService.getUserPermissions(id))
+                .build();
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('USER_UPDATE')")
     public ApiResponse<UserResponse> updateUser(

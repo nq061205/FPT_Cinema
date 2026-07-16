@@ -1,5 +1,8 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.util.List;
+
+import com.group6.mvc.fpt_cinema.dto.response.PermissionResponse;
 import com.group6.mvc.fpt_cinema.dto.response.RolePermissionResponse;
 import com.group6.mvc.fpt_cinema.entity.Permission;
 import com.group6.mvc.fpt_cinema.entity.Role;
@@ -57,6 +60,61 @@ public class RolePermissionServiceImpl
                 .roleName(role.getRoleName())
                 .permissionId(permission.getId())
                 .permissionCode(permission.getPermissionCode())
+                .build();
+    }
+
+    @Override
+    public List<PermissionResponse> getRolePermissions(Integer roleId) {
+        if (!roleRepository.existsById(roleId)) {
+            throw new AppException(ErrorCode.ROLE_NOT_FOUND);
+        }
+        return rolePermissionRepository.findAllWithPermissionByRoleId(roleId).stream()
+                .map(Role_Permission::getPermission)
+                .map(this::toPermissionResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public List<PermissionResponse> replaceRolePermissions(
+            Integer roleId,
+            List<Integer> permissionIds) {
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        List<Integer> distinctPermissionIds = permissionIds == null
+                ? List.of()
+                : permissionIds.stream().distinct().toList();
+
+        List<Permission> permissions = permissionRepository.findAllById(distinctPermissionIds);
+        if (permissions.size() != distinctPermissionIds.size()) {
+            throw new AppException(ErrorCode.PERMISSION_NOT_FOUND);
+        }
+
+        rolePermissionRepository.deleteByRoleId(roleId);
+        rolePermissionRepository.flush();
+
+        List<Role_Permission> newAssignments = permissions.stream()
+                .map(permission -> {
+                    Role_Permission assignment = new Role_Permission();
+                    assignment.setRole(role);
+                    assignment.setPermission(permission);
+                    return assignment;
+                })
+                .toList();
+        rolePermissionRepository.saveAll(newAssignments);
+
+        return permissions.stream()
+                .map(this::toPermissionResponse)
+                .toList();
+    }
+
+    private PermissionResponse toPermissionResponse(Permission permission) {
+        return PermissionResponse.builder()
+                .id(permission.getId())
+                .permissionCode(permission.getPermissionCode())
+                .permissionName(permission.getPermissionName())
+                .description(permission.getDescription())
                 .build();
     }
 }
