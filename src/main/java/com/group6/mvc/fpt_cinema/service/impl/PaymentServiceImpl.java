@@ -266,6 +266,27 @@ public class PaymentServiceImpl
 
         payment.setStatus(PaymentStatus.FAILED);
         paymentRepository.save(payment);
+
+        Booking failedBooking = payment.getBooking();
+        if (failedBooking.getStatus() == BookingStatus.PENDING) {
+            failedBooking.setStatus(BookingStatus.CANCELLED);
+            bookingRepository.save(failedBooking);
+
+            List<Ticket> tickets = ticketRepository.findByBookingId(failedBooking.getId());
+            tickets.forEach(t -> t.setStatus("CANCELLED"));
+            ticketRepository.saveAll(tickets);
+
+            if (failedBooking.getPromotion() != null) {
+                userPromotionRepository
+                        .findByUserIdAndPromotionId(failedBooking.getCustomer().getId(), failedBooking.getPromotion().getId())
+                        .ifPresent(up -> {
+                            up.setStatus(UserPromotionStatus.AVAILABLE);
+                            up.setUsedAt(null);
+                            userPromotionRepository.save(up);
+                        });
+            }
+        }
+
         String message = amountMatches
                 ? "Payment failed (VNPay response code " + responseCode + ")"
                 : "Amount mismatch";

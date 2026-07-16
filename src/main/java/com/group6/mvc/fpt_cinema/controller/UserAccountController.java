@@ -85,6 +85,15 @@ public class UserAccountController {
                 .build();
     }
 
+    @GetMapping("/{userId}/permissions")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('USER_PERMISSION_ASSIGN')")
+    public ApiResponse<List<UserPermissionResponse>> getPermissionsByUser(@PathVariable Integer userId) {
+        return ApiResponse.<List<UserPermissionResponse>>builder()
+                .message("User permissions retrieved successfully")
+                .result(userPermissionService.getPermissionsByUser(userId))
+                .build();
+    }
+
     @PutMapping("/{userId}/permissions/{permissionId}")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('USER_PERMISSION_ASSIGN')")
     public ApiResponse<UserPermissionResponse> assignPermissionToUser(

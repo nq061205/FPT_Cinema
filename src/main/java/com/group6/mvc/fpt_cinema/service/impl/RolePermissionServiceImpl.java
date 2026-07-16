@@ -2,7 +2,10 @@ package com.group6.mvc.fpt_cinema.service.impl;
 
 import java.util.List;
 
+<<<<<<< Updated upstream
 import com.group6.mvc.fpt_cinema.dto.response.PermissionResponse;
+=======
+>>>>>>> Stashed changes
 import com.group6.mvc.fpt_cinema.dto.response.RolePermissionResponse;
 import com.group6.mvc.fpt_cinema.entity.Permission;
 import com.group6.mvc.fpt_cinema.entity.Role;
@@ -33,6 +36,22 @@ public class RolePermissionServiceImpl
         this.rolePermissionRepository = repository;
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
+    }
+
+    @Override
+    public List<RolePermissionResponse> getPermissionsByRole(Integer roleId) {
+        roleRepository.findById(roleId)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        return rolePermissionRepository.findAllWithPermissionByRoleId(roleId).stream()
+                .map(rolePermission -> RolePermissionResponse.builder()
+                        .id(rolePermission.getId())
+                        .roleId(rolePermission.getRole().getId())
+                        .roleName(rolePermission.getRole().getRoleName())
+                        .permissionId(rolePermission.getPermission().getId())
+                        .permissionCode(rolePermission.getPermission().getPermissionCode())
+                        .build())
+                .toList();
     }
 
     @Override

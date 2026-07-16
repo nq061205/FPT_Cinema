@@ -41,7 +41,7 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Integer> {
             @Param("roomId") Integer roomId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
-            @Param("targetStatus") String targetStatus,
+            @Param("targetStatus") ShowtimeStatus targetStatus,
             Pageable pageable
     );
  
@@ -62,6 +62,14 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Integer> {
         AND DATE_ADD(s.start_time, INTERVAL m.duration_minutes MINUTE) < :now
     """, nativeQuery = true)
     int updateMissedShowtimes(@Param("now") LocalDateTime now);
+
+    @Query(value = """
+        SELECT s.* FROM showtimes s
+        JOIN movies m ON s.movie_id = m.id
+        WHERE s.status NOT IN ('CANCELLED', 'FINISHED')
+        AND DATE_ADD(s.start_time, INTERVAL m.duration_minutes MINUTE) < :now
+    """, nativeQuery = true)
+    List<Showtime> findMissedShowtimes(@Param("now") LocalDateTime now);
 
     //lay cac suat chieu trog tuong lai de dang ky lại lịch động
     @Query(value = """

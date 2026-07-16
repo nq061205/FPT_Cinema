@@ -35,6 +35,23 @@ public class UserPermissionServiceImpl
     }
 
     @Override
+    public List<UserPermissionResponse> getPermissionsByUser(Integer userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        return userPermissionRepository.findAllWithPermissionByUserId(userId).stream()
+                .map(userPermission -> UserPermissionResponse.builder()
+                        .id(userPermission.getId())
+                        .userId(userPermission.getUser().getId())
+                        .email(userPermission.getUser().getEmail())
+                        .permissionId(userPermission.getPermission().getId())
+                        .permissionCode(userPermission.getPermission().getPermissionCode())
+                        .isGranted(userPermission.getIsGranted())
+                        .build())
+                .toList();
+    }
+
+    @Override
     @Transactional
     public UserPermissionResponse assignPermission(
             Integer userId,

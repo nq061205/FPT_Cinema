@@ -30,10 +30,10 @@ public class RolePermissionController {
 
     @GetMapping("/{roleId}/permissions")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('ROLE_PERMISSION_ASSIGN')")
-    public ApiResponse<List<PermissionResponse>> getRolePermissions(@PathVariable Integer roleId) {
-        return ApiResponse.<List<PermissionResponse>>builder()
+    public ApiResponse<List<RolePermissionResponse>> getRolePermissions(@PathVariable Integer roleId) {
+        return ApiResponse.<List<RolePermissionResponse>>builder()
                 .message("Role permissions retrieved successfully")
-                .result(rolePermissionService.getRolePermissions(roleId))
+                .result(rolePermissionService.getPermissionsByRole(roleId))
                 .build();
     }
 

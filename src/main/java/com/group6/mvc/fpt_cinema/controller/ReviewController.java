@@ -53,7 +53,7 @@ public class ReviewController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CUSTOMER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
     @DeleteMapping("/{reviewId}")
     public ApiResponse<String> deleteReview(
         @PathVariable Integer reviewId,
@@ -68,7 +68,7 @@ public class ReviewController {
             .build();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping
     public ApiResponse<Page<ReviewResponse>> getAllReviews(
         @RequestParam(required = false) Integer movieId,

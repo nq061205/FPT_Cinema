@@ -201,7 +201,7 @@ public class BookingServiceImpl
         booking.setSubtotal(subtotal);
         booking.setDiscountAmount(discountAmount);
         booking.setFinalAmount(finalAmount);
-        booking.setExpiresAt(LocalDateTime.now().plusMinutes(15));
+        booking.setExpiresAt(LocalDateTime.now().plusMinutes(2));
         Booking savedBooking = bookingRepository.save(booking);
 
         List<Ticket> tickets = new ArrayList<>();
@@ -223,6 +223,32 @@ public class BookingServiceImpl
         bookingProductRepository.saveAll(bookingProducts);
 
         return bookingMapper.toCreateBookingResponse(savedBooking, tickets);
+    }
+
+    @Override
+    @Transactional
+    public void expireStaleBookings() {
+        List<Booking> staleBookings = bookingRepository.findByStatusAndExpiresAtBefore(
+                BookingStatus.PENDING, LocalDateTime.now());
+
+        for (Booking booking : staleBookings) {
+            booking.setStatus(BookingStatus.CANCELLED);
+            bookingRepository.save(booking);
+
+            List<Ticket> tickets = ticketRepository.findByBookingId(booking.getId());
+            tickets.forEach(t -> t.setStatus("CANCELLED"));
+            ticketRepository.saveAll(tickets);
+
+            if (booking.getPromotion() != null) {
+                userPromotionRepository
+                        .findByUserIdAndPromotionId(booking.getCustomer().getId(), booking.getPromotion().getId())
+                        .ifPresent(up -> {
+                            up.setStatus(UserPromotionStatus.AVAILABLE);
+                            up.setUsedAt(null);
+                            userPromotionRepository.save(up);
+                        });
+            }
+        }
     }
 
     private BigDecimal calculateDiscount(Promotion promotion, BigDecimal subtotal) {

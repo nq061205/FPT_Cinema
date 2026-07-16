@@ -53,7 +53,7 @@ public class RoomController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('ROOM_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('ROOM_MANAGE')")
     public ApiResponse<RoomResponse> creatRoom(@RequestBody RoomRequest request){
         return ApiResponse.<RoomResponse>builder()
         .message("Room created successfully")
@@ -62,7 +62,7 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('ROOM_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('ROOM_MANAGE')")
     public ApiResponse<RoomResponse> updateRoom(
         @PathVariable Integer id,
         @RequestBody RoomRequest request
@@ -75,7 +75,7 @@ public class RoomController {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('ROOM_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('ROOM_MANAGE')")
     public ApiResponse<Void> deleteRoom(@PathVariable Integer id){
         roomService.deleteRoom(id);
         return ApiResponse.<Void>builder()
@@ -84,7 +84,7 @@ public class RoomController {
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('ROOM_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('ROOM_MANAGE')")
     public ApiResponse<Void> updateRoomStatus(
         @PathVariable Integer id,
         @RequestBody RoomStatusRequest request
