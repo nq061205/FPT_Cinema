@@ -1,5 +1,6 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.util.List;
 import java.util.Locale;
 
 import com.group6.mvc.fpt_cinema.dto.request.CreatePermissionRequest;
@@ -71,6 +72,13 @@ public class PermissionServiceImpl
         }
 
         return toResponse(permissionRepository.save(permission));
+    }
+
+    @Override
+    public List<PermissionResponse> getPermissions() {
+        return permissionRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     private void ensurePermissionCodeAvailable(String permissionCode, Integer currentId) {

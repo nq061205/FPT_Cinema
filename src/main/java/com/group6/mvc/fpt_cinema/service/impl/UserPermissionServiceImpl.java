@@ -1,5 +1,7 @@
 package com.group6.mvc.fpt_cinema.service.impl;
 
+import java.util.List;
+
 import com.group6.mvc.fpt_cinema.dto.response.UserPermissionResponse;
 import com.group6.mvc.fpt_cinema.entity.Permission;
 import com.group6.mvc.fpt_cinema.entity.User;
@@ -62,6 +64,27 @@ public class UserPermissionServiceImpl
                 .permissionId(permission.getId())
                 .permissionCode(permission.getPermissionCode())
                 .isGranted(savedAssignment.getIsGranted())
+                .build();
+    }
+
+    @Override
+    public List<UserPermissionResponse> getUserPermissions(Integer userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
+        return userPermissionRepository.findAllWithPermissionByUserId(userId).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private UserPermissionResponse toResponse(User_Permission userPermission) {
+        Permission permission = userPermission.getPermission();
+        return UserPermissionResponse.builder()
+                .id(userPermission.getId())
+                .userId(userPermission.getUser().getId())
+                .permissionId(permission.getId())
+                .permissionCode(permission.getPermissionCode())
+                .isGranted(userPermission.getIsGranted())
                 .build();
     }
 }
