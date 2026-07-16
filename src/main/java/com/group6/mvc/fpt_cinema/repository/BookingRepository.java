@@ -1,7 +1,6 @@
 package com.group6.mvc.fpt_cinema.repository;
 
 import com.group6.mvc.fpt_cinema.entity.Booking;
-import com.group6.mvc.fpt_cinema.entity.Ticket;
 import com.group6.mvc.fpt_cinema.enums.BookingStatus;
 
 import java.time.LocalDateTime;
@@ -25,19 +24,23 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     Page<Booking> findByCustomerId(Integer customerId, Pageable pageable);
 
-    long countByShowtimeIdAndStatus(Integer showtimeId, BookingStatus status); 
+    long countByShowtimeIdAndStatus(Integer showtimeId, BookingStatus status);
 
+    @Query("""
+        SELECT b FROM Booking b
+        JOIN Ticket t ON t.booking.id = b.id
+        WHERE b.customer.id = :userId
+          AND b.showtime.movie.id = :movieId
+          AND b.status = 'CONFIRMED'
+          AND t.status = 'USED'
+          AND b.showtime.startTime < :now
+        ORDER BY b.showtime.startTime DESC
+    """)
+    List<Booking> findCompletedBooking(
+            @Param("userId") Integer userId,
+            @Param("movieId") Integer movieId,
+            @Param("now") LocalDateTime now,
+            Pageable pageable);
 
-
-@Query("""
-    SELECT b FROM Booking b
-    JOIN Ticket t ON t.booking.id = b.id
-    WHERE b.customer.id = :userId
-      AND b.showtime.movie.id = :movieId
-      AND b.status = 'CONFIRMED'
-      AND t.status = 'USED'
-      AND b.showtime.startTime < :now
-    ORDER BY b.showtime.startTime DESC
-""")
-List<Booking> findCompletedBooking(@Param("userId") Integer userId, @Param("movieId") Integer movieId, @Param("now") LocalDateTime now, Pageable pageable);
+    List<Booking> findByStatusAndExpiresAtBefore(BookingStatus status, LocalDateTime time);
 }

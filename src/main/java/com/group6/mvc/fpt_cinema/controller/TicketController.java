@@ -26,7 +26,7 @@ public class TicketController {
     }
 
     @PostMapping("/check-in")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ApiResponse<CheckInTicketResponse> checkIn(
             @Valid @RequestBody CheckInTicketRequest request) {
 
@@ -37,7 +37,7 @@ public class TicketController {
     }
 
     @PostMapping("/lookup")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ApiResponse<TicketLookupResponse> lookup(
             @Valid @RequestBody TicketLookupRequest request) {
 

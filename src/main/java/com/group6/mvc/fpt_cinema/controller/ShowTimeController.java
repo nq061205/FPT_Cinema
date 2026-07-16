@@ -46,12 +46,12 @@ public class ShowTimeController {
         @RequestParam(required = false) Integer movieId,
         @RequestParam(required = false) Integer roomId,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-        @RequestParam(required = false) String status,
+        @RequestParam(required = false, defaultValue = "OPEN") String status,
         @PageableDefault(size = 20, sort = "startTime") Pageable pageable
     ){
         return ApiResponse.<Page<ShowtimeResponse>>builder()
-        .message("Showtimes retrived successfully")
-        .result(showtimeService.getAllShowtimes(movieId, roomId, date,status, pageable))
+        .message("Showtimes retrieved successfully")
+        .result(showtimeService.getAllShowtimes(movieId, roomId, date, status, pageable))
         .build();
     }
 
@@ -65,7 +65,7 @@ public class ShowTimeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<ShowtimeResponse> createShowtime(@RequestBody ShowtimeRequest request){
         return ApiResponse.<ShowtimeResponse>builder()
         .message("Showtime created successfully")
@@ -74,7 +74,7 @@ public class ShowTimeController {
     }
 
     @PostMapping("/batch")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<List<ShowtimeResponse>> createBatch(
             @RequestBody BatchShowtimeRequest request
             ){
@@ -85,7 +85,7 @@ public class ShowTimeController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<ShowtimeResponse> updateShowtime(
         @PathVariable Integer id,
         @RequestBody ShowtimeRequest request
@@ -97,7 +97,7 @@ public class ShowTimeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('SHOWTIME_MANAGE')")
     public ApiResponse<Void> cancelShowtime(@PathVariable Integer id){
         showtimeService.cancelShowtime(id);
         return ApiResponse.<Void>builder()

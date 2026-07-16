@@ -23,7 +23,7 @@ import com.group6.mvc.fpt_cinema.service.ReportService;
 
 @RestController
 @RequestMapping("/api/reports")
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('REPORT_VIEW')")
+@PreAuthorize("hasAnyRole('MANAGER', 'STAFF') or hasAuthority('REPORT_VIEW')")
 public class ReportController {
 
     private final ReportService reportService;

@@ -14,4 +14,6 @@ public interface MovieService extends CrudService<Movie, Integer> {
     List<ViewMovieListResponse> viewMovieList(ViewMovieListRequest request);
 
     CreateMovieResponse createMovie(CreateMovieRequest request);
+
+    CreateMovieResponse updateMovie(Integer id, CreateMovieRequest request);
 }

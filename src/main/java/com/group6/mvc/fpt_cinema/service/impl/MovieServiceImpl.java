@@ -12,6 +12,8 @@ import com.group6.mvc.fpt_cinema.dto.request.ViewMovieListRequest;
 import com.group6.mvc.fpt_cinema.dto.response.CreateMovieResponse;
 import com.group6.mvc.fpt_cinema.dto.response.ViewMovieListResponse;
 import com.group6.mvc.fpt_cinema.entity.Movie;
+import com.group6.mvc.fpt_cinema.enums.ErrorCode;
+import com.group6.mvc.fpt_cinema.exception.AppException;
 import com.group6.mvc.fpt_cinema.mapper.MovieMapper;
 import com.group6.mvc.fpt_cinema.repository.MovieRepository;
 import com.group6.mvc.fpt_cinema.service.MovieService;
@@ -68,5 +70,13 @@ public class MovieServiceImpl
                 return movieMapper.toCreateMovieResponse(savedMovie);
         }
 
-        
+        @Override
+        @Transactional
+        public CreateMovieResponse updateMovie(Integer id, CreateMovieRequest request) {
+                Movie movie = movieRepository.findById(id)
+                                .orElseThrow(() -> new AppException(ErrorCode.MOVIE_NOT_FOUND));
+                movieMapper.updateMovie(movie, request);
+                Movie savedMovie = movieRepository.save(movie);
+                return movieMapper.toCreateMovieResponse(savedMovie);
+        }
 }

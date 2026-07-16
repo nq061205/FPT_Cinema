@@ -2,6 +2,7 @@ package com.group6.mvc.fpt_cinema.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -162,6 +163,35 @@ class PermissionManagementControllerTest {
                 .extracting("isGranted")
                 .isEqualTo(true);
         assertThat(userPermissionRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    void adminCanListRoleAndUserPermissions() throws Exception {
+        mockMvc.perform(put("/api/roles/{roleId}/permissions/{permissionId}", staffRole.getId(), permission.getId())
+                        .with(adminJwt()))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(put("/api/user/{userId}/permissions/{permissionId}", user.getId(), permission.getId())
+                        .with(adminJwt())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "isGranted": true
+                                }
+                                """))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/roles/{roleId}/permissions", staffRole.getId())
+                        .with(adminJwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result[0].roleId").value(staffRole.getId()))
+                .andExpect(jsonPath("$.result[0].permissionCode").value("REPORT_EXPORT"));
+
+        mockMvc.perform(get("/api/user/{userId}/permissions", user.getId())
+                        .with(adminJwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result[0].userId").value(user.getId()))
+                .andExpect(jsonPath("$.result[0].permissionCode").value("REPORT_EXPORT"));
     }
 
     @Test

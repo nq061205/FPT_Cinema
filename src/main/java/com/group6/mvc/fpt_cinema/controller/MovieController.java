@@ -2,8 +2,11 @@ package com.group6.mvc.fpt_cinema.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,7 +53,7 @@ public class MovieController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('MOVIE_CREATE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('MOVIE_CREATE')")
     public ApiResponse<CreateMovieResponse> createMovie(
             @RequestBody CreateMovieRequest request) {
 
@@ -62,6 +65,28 @@ public class MovieController {
         response.setResult(
                 movieService.createMovie(request));
 
+        return response;
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('MOVIE_UPDATE')")
+    public ApiResponse<CreateMovieResponse> updateMovie(
+            @PathVariable Integer id,
+            @RequestBody CreateMovieRequest request) {
+
+        ApiResponse<CreateMovieResponse> response = new ApiResponse<>();
+        response.setMessage("Movie updated successfully!");
+        response.setResult(movieService.updateMovie(id, request));
+        return response;
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('MOVIE_DELETE')")
+    public ApiResponse<Void> deleteMovie(@PathVariable Integer id) {
+        movieService.deleteById(id);
+
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setMessage("Movie deleted successfully!");
         return response;
     }
 }

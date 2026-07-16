@@ -13,4 +13,6 @@ public interface BookingService extends CrudService<Booking, Integer> {
     List<ViewBookingHistoryResponse> getBookingHistory(Integer customerId, ViewBookingHistoryRequest request);
 
     CreateBookingResponse createBooking(Integer customerId, CreateBookingRequest request);
+
+    void expireStaleBookings();
 }

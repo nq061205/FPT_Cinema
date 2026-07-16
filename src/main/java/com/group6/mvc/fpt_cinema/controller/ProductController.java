@@ -52,7 +52,7 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('PRODUCT_CREATE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('PRODUCT_CREATE')")
     public ApiResponse<CreateProductResponse> createProduct(
             @RequestBody CreateProductRequest request) {
 
@@ -63,7 +63,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or hasAuthority('PRODUCT_UPDATE')")
+    @PreAuthorize("hasRole('MANAGER') or hasAuthority('PRODUCT_UPDATE')")
     public ApiResponse<UpdateProductResponse> updateProduct(
             @PathVariable Integer id,
             @RequestBody UpdateProductRequest request) {

@@ -35,7 +35,25 @@ public class MovieMapper {
         movie.setPosterUrl(request.getPosterUrl());
         movie.setTrailerUrl(request.getTrailerUrl());
         movie.setDescription(request.getDescription());
+        movie.setReleaseDate(request.getReleaseDate());
+        if (request.getStatus() != null) {
+            movie.setStatus(request.getStatus());
+        }
         return movie;
+    }
+
+    public void updateMovie(Movie movie, CreateMovieRequest request) {
+        movie.setTitle(request.getTitle());
+        movie.setGenre(request.getGenre());
+        movie.setDurationMinutes(request.getDurationMinutes());
+        movie.setAgeRating(request.getAgeRating());
+        movie.setPosterUrl(request.getPosterUrl());
+        movie.setTrailerUrl(request.getTrailerUrl());
+        movie.setDescription(request.getDescription());
+        movie.setReleaseDate(request.getReleaseDate());
+        if (request.getStatus() != null) {
+            movie.setStatus(request.getStatus());
+        }
     }
 
     public CreateMovieResponse toCreateMovieResponse(Movie movie) {

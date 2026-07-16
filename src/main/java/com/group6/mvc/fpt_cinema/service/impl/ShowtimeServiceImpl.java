@@ -307,15 +307,23 @@ public class ShowtimeServiceImpl
     }
 
     @Override
-    public Page<ShowtimeResponse> getAllShowtimes(Integer movieId, Integer roomId, LocalDate date,String status,   Pageable pageable) {
+    public Page<ShowtimeResponse> getAllShowtimes(Integer movieId, Integer roomId, LocalDate date, String status, Pageable pageable) {
         LocalDateTime startDate = (date != null) ? date.atStartOfDay() : null;
         LocalDateTime endDate = (date != null) ? date.plusDays(1).atStartOfDay() : null;
 
-        return showtimeRepository.findFiltered(movieId, roomId, startDate, endDate, status, pageable)
+        ShowtimeStatus targetStatus = null;
+        if (status == null || status.isBlank()) {
+            targetStatus = ShowtimeStatus.OPEN;
+        } else if (!"ALL".equalsIgnoreCase(status)) {
+            targetStatus = ShowtimeStatus.valueOf(status.trim().toUpperCase());
+        }
+
+        return showtimeRepository.findFiltered(movieId, roomId, startDate, endDate, targetStatus, pageable)
                 .map(this::toResponse);
     }
 
     @Override
+    @Transactional
     public List<ViewShowTimeListResponse> getShowTimesList(ViewShowTimeListRequest request) {
         Pageable pageable = PageRequest.of(
                 request.getPage(),
@@ -420,11 +428,22 @@ public class ShowtimeServiceImpl
     @org.springframework.transaction.annotation.Transactional
     public void recoverShowtimeJobs() {
         LocalDateTime now = LocalDateTime.now();
-       
-        int updated = showtimeRepository.updateMissedShowtimes(now);
-        System.out.println("Recovered/Updated " + updated + " missed showtimes to FINISHED.");
 
-      
+        // Fetch missed showtimes and update them individually to avoid large table locks
+        List<Showtime> missed = showtimeRepository.findMissedShowtimes(now);
+        int updatedCount = 0;
+        for (Showtime s : missed) {
+            try {
+                // update each showtime in its own transaction to reduce lock contention
+                showtimeRepository.updateStatusToFinished(s.getId());
+                updatedCount++;
+            } catch (Exception ex) {
+                // log and continue with other showtimes
+                System.err.println("Failed to update showtime id=" + s.getId() + ": " + ex.getMessage());
+            }
+        }
+        System.out.println("Recovered/Updated " + updatedCount + " missed showtimes to FINISHED.");
+
         List<Showtime> futureShowtimes = showtimeRepository.findFutureActiveShowtimes(now);
         for (Showtime showtime : futureShowtimes) {
             scheduleShowtimeEndJob(showtime);

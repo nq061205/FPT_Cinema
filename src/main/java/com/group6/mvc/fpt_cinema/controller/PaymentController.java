@@ -67,7 +67,7 @@ public class PaymentController {
     }
 
     // Chỉ STAFF mới tạo được payment tiền mặt cho khách tại quầy
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF') or hasAuthority('PAYMENT_CASH')")
+    @PreAuthorize("hasRole('STAFF') or hasAuthority('PAYMENT_CASH')")
     @PostMapping("/cash")
     public ApiResponse<CreatePaymentResponse> createCashPayment(
             @RequestBody CreateCashPaymentRequest request) {
@@ -79,7 +79,7 @@ public class PaymentController {
     }
 
     // Chỉ nhân viên quầy vé (STAFF) mới được xác nhận thu tiền mặt
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF') or hasAuthority('PAYMENT_CASH')")
+    @PreAuthorize("hasRole('STAFF') or hasAuthority('PAYMENT_CASH')")
     @PostMapping("/cash/confirm")
     public ApiResponse<PaymentResponse> confirmCashPayment(
             @RequestBody ConfirmCashPaymentRequest request) {
@@ -136,7 +136,7 @@ public class PaymentController {
     }
 
     @PostMapping("/refund-confirm")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ApiResponse<ConfirmRefundResponse> confirmRefund(
             @RequestBody ConfirmRefundRequest request) {
 
@@ -147,7 +147,7 @@ public class PaymentController {
     }
 
     @PostMapping("/refund-reject")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ApiResponse<RejectRefundResponse> rejectRefund(
             @RequestBody RejectRefundRequest request) {
 
@@ -158,7 +158,7 @@ public class PaymentController {
     }
 
     @GetMapping("/refund-requests")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ApiResponse<List<PendingRefundResponse>> listPendingRefunds() {
         ApiResponse<List<PendingRefundResponse>> response = new ApiResponse<>();
         response.setMessage("Pending refunds retrieved successfully!");
